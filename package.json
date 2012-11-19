@@ -2,6 +2,7 @@
   "name": "madeye-common",
   "version": "0.0.1",
   "private": true,
+  "main": "./common.js",
   "scripts": {
     "test": "bin/test"
   },
