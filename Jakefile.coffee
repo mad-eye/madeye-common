@@ -17,4 +17,4 @@ task "clean", {async: true}, (params)->
 
 desc "run the test suite"
 task "test", ["compile"], (params)->
-  run "test", """find dist/tests -name "*Test.js" | xargs mocha"""
+  run "test", """find dist/tests -name "*Test.js" -print0 | xargs -0 mocha"""
