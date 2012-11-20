@@ -13,8 +13,7 @@ task 'compile', {async: true}, (params)->
 
 desc "remove all compiled js"
 task "clean", {async: true}, (params)->
-  run "clean", "rm -rf dist", ->
-    console.log "now we're talking"
+  run "clean", "rm -rf dist", complete
 
 desc "run the test suite"
 task "test", ["compile"], (params)->
