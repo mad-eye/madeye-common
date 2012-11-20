@@ -12,6 +12,7 @@
     "node-uuid": "~1.4.0"
   },
   "devDependencies": {
+    "jake": "~0.5.6",
     "mocha": "~1.7.0",
     "request": "~2.12.0"
   }
