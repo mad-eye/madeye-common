@@ -1,4 +1,5 @@
 uuid = require 'node-uuid'
+_ = require 'underscore'
 
 # Messages are of the form:
 #   id: uuid (required)
@@ -14,12 +15,16 @@ uuid = require 'node-uuid'
 #
 # Each message must have EITHER an action OR an error, but not both.
 class ChannelMessage
-  constructor: (@action) ->
+  #Options includes the various top-level attributes to be set.
+  constructor: (@action, options) ->
     @id = uuid.v4()
     @replyTo = null
     @projectId = null
     @timestamp = new Date().getTime()
     @important = true
+    _.extend this, options
+
+
 
   validate: () ->
     ok = @id? and @timestamp?
