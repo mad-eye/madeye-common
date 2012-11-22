@@ -1,6 +1,7 @@
+uuid = require 'node-uuid'
 {Settings} = require '../Settings'
 {BCSocket} = require 'browserchannel'
-uuid = require 'node-uuid'
+{ChannelMessage} = require './ChannelMessage'
 
 #WARNING: Must call @destroy when done to close the channel.
 class SocketClient

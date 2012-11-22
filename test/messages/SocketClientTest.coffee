@@ -49,6 +49,19 @@ describe 'SocketClient', ->
     it 'should have saved the message', ->
       assert.equal socketClient.sentMessages[message.id], message
 
+  describe 'handleMessage', ->
+    before ->
+      socket = new MockSocket()
+      socketClient = new SocketClient(socket)
+      socketClient.openConnection projectId
+    it 'triggers onMessage on receive', ->
+      receivedMsg = null
+      socketClient.onMessage = (msg) ->
+        receivedMsg = msg
+      message = new ChannelMessage(ChannelMessage.REQUEST_FILE)
+      socket.receive message
+      assert.equal message, receivedMsg
+
       
 
 
