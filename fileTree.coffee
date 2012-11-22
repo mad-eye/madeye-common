@@ -1,5 +1,4 @@
 _ = require "underscore" unless Meteor?
-util = require "util"
 
 class FileTree
   constructor: (rawFiles)-> #straight outta mongo
