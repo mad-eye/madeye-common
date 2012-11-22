@@ -33,6 +33,10 @@ class ChannelMessage
     JSON.stringify this
 
   #Message constructors
+  @handshakeMessage: (projectId) ->
+    return new ChannelMessage ChannelMessage.HANDSHAKE,
+      projectId: projectId
+
   @confirmationMessage: (message) ->
     confirmationMessage = new ChannelMessage(ChannelMessage.CONFIRM)
     confirmationMessage.receivedId = message.id

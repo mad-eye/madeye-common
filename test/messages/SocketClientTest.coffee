@@ -4,6 +4,7 @@ uuid = require 'node-uuid'
 {MockSocket} = require '../../mock/MockSocket'
 {ChannelMessage} = require '../../messages/ChannelMessage'
 
+
 describe 'SocketClient', ->
   socket = socketClient = null
   projectId = uuid.v4()
@@ -11,8 +12,8 @@ describe 'SocketClient', ->
   describe 'openConnection', ->
     before ->
       socket = new MockSocket()
-      socketClient = new SocketClient(socket)
-      socketClient.openConnection projectId
+      socketClient = new SocketClient()
+      socketClient.openConnection projectId, socket
     it 'should set socket.onopen', ->
       assert.ok socket.onopen
     it 'should set socket.onmessage', ->
@@ -25,8 +26,8 @@ describe 'SocketClient', ->
   describe 'destroy', ->
     before ->
       socket = new MockSocket()
-      socketClient = new SocketClient(socket)
-      socketClient.openConnection projectId
+      socketClient = new SocketClient()
+      socketClient.openConnection projectId, socket
       socketClient.destroy()
     it 'should close socket', ->
       assert.equal socket.readyState, MockSocket.CLOSED
@@ -38,8 +39,8 @@ describe 'SocketClient', ->
       socket = new MockSocket()
       socket.onsend = (msg) ->
         sentMessages.push msg
-      socketClient = new SocketClient(socket)
-      socketClient.openConnection projectId
+      socketClient = new SocketClient()
+      socketClient.openConnection projectId, socket
       socketClient.send message
     it 'should set message projectId', ->
       assert.equal message.projectId, projectId
@@ -52,8 +53,8 @@ describe 'SocketClient', ->
   describe 'handleMessage', ->
     before ->
       socket = new MockSocket()
-      socketClient = new SocketClient(socket)
-      socketClient.openConnection projectId
+      socketClient = new SocketClient()
+      socketClient.openConnection projectId, socket
     it 'triggers onMessage on receive', ->
       receivedMsg = null
       socketClient.onMessage = (msg) ->
