@@ -7,7 +7,7 @@ class MockSocket
   constructor: (callbacks) ->
     @id = uuid.v4()
     @address = "192.168.0.0"
-    @setState @CONNECTING
+    @setState MockSocket.CONNECTING
     _.extend(this, callbacks)
     @options = {}
     @headers = {}
@@ -16,11 +16,11 @@ class MockSocket
   setState: (state) ->
     oldState = @readyState
     @readyState = state
-    @['onopen']?() if @readyState == @OPEN && oldState != @OPEN
-    @['onclose']?() if @readyState == @CLOSED && oldState != @CLOSED
+    @['onopen']?() if @readyState == MockSocket.OPEN && oldState != MockSocket.OPEN
+    @['onclose']?() if @readyState == MockSocket.CLOSED && oldState != MockSocket.CLOSED
 
   completeConnection: ->
-    @setState @OPEN
+    @setState MockSocket.OPEN
 
   send: (message) ->
     @onsend message if @onsend?
@@ -29,11 +29,12 @@ class MockSocket
     @onmessage message if @onmessage?
 
   open: ->
-    throw new Error 'Already open' unless @readyState is @CLOSED
-    @setState @CONNECTING
+    throw new Error 'Already open' unless @readyState is MockSocket.CLOSED
+    @setState MockSocket.CONNECTING
 
   close: ->
-    @setState @CLOSED
+    console.log "Closing socket #{@id}"
+    @setState MockSocket.CLOSED
 
   on: (action, callback) ->
     @["on#{action}"] = callback

@@ -1,4 +1,4 @@
-{Settings} = require './Settings'
+{Settings} = require '../Settings'
 {BCSocket} = require 'browserchannel'
 uuid = require 'node-uuid'
 
@@ -8,7 +8,7 @@ class SocketClient
     unless socket
       @socket = new BCSocket "http://#{Settings.bcHost}:#{Settings.bcPort}/channel", reconnect:true
     console.log "SocketClient constructed with socket", @socket
-    @sentMsgs = {}
+    @sentMessages = {}
     @registeredCallbacks = {}
 
   destroy: ->
@@ -17,7 +17,7 @@ class SocketClient
 
   handleMessage: (message) ->
     if message.action == ChannelMessage.CONFIRM
-      delete @sentMsgs[message.receivedId]
+      delete @sentMessages[message.receivedId]
     #Check for any callbacks waiting for a response.
     else if message.replyTo?
       #console.log "Checking registered callback to #{message.replyTo}"
@@ -35,7 +35,7 @@ class SocketClient
       else
         console.warn "No onMessage to handle message", message
 
-  openBrowserChannel: (@projectId) ->
+  openConnection: (@projectId) ->
     @socket.onopen = =>
       @send new ChannelMessage(ChannelMessage.HANDSHAKE)
       console.log "opening connection"
@@ -45,12 +45,12 @@ class SocketClient
     @socket.onerror = (message) =>
       console.log "ChannelConnector got error" , message
     @socket.onclose = (message) =>
-      console.log "closing time", message
+      console.log "closing time:", message
 
   send: (message, callback) ->
     message.projectId = @projectId
     @socket.send message
-    @sentMsgs[message.id] = message
+    @sentMessages[message.id] = message
     @registeredCallbacks[message.id] = callback
 
 
