@@ -24,8 +24,6 @@ class ChannelMessage
     @important = true
     _.extend this, options
 
-
-
   validate: () ->
     ok = @id? and @timestamp?
     ok = false if (@action? and @error?) or (!@action? and !@error?)
@@ -49,9 +47,6 @@ class ChannelMessage
   @errorMessage: (error) ->
     message = new ChannelMessage(null)
     message.error = error
-
-
-
 
 #Message Actions
 ChannelMessage.HANDSHAKE = 'handshake'

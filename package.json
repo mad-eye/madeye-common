@@ -9,7 +9,9 @@
   "dependencies": {
     "coffee-script": "~1.4.0",
     "underscore": "~1.4.2",
-    "node-uuid": "~1.4.0"
+    "node-uuid": "~1.4.0",
+    "browserchannel": "~0.4.2",
+    "connect": "~2.7.0"
   },
   "devDependencies": {
     "jake": "~0.5.6",
