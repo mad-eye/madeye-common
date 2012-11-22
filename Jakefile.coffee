@@ -10,7 +10,7 @@ run = (task, command, callback) ->
 #TODO abort if this fails
 desc 'compile all the coffeescript'
 task 'compile', {async: true}, (params)->
-  run "compile", """coffee --output dist --compile .""", complete
+  run "compile", """coffee --output dist --compile src""", complete
 
 desc "remove all compiled js"
 task "clean", {async: true}, (params)->
