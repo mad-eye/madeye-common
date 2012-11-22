@@ -1,13 +1,13 @@
 assert = require 'assert'
 uuid = require 'node-uuid'
 {SocketClient} = require '../../messages/SocketClient'
-{MockSocket} = require '../../mock/MockSocket'
+{MockSocket} = require '../mock/MockSocket'
 {ChannelMessage} = require '../../messages/ChannelMessage'
 
 describe 'SocketClient', ->
   socket = socketClient = null
   projectId = uuid.v4()
-  
+
   describe 'openConnection', ->
     before ->
       socket = new MockSocket()
@@ -30,7 +30,7 @@ describe 'SocketClient', ->
       socketClient.destroy()
     it 'should close socket', ->
       assert.equal socket.readyState, MockSocket.CLOSED
-    
+
   describe 'send', ->
     message = new ChannelMessage(ChannelMessage.ADD_FILES)
     sentMessages = []
@@ -61,9 +61,3 @@ describe 'SocketClient', ->
       message = new ChannelMessage(ChannelMessage.REQUEST_FILE)
       socket.receive message
       assert.equal message, receivedMsg
-
-      
-
-
-  
-

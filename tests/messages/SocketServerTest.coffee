@@ -2,7 +2,7 @@ assert = require 'assert'
 uuid = require 'node-uuid'
 {SocketServer} = require '../../messages/SocketServer'
 {ChannelMessage} = require '../../messages/ChannelMessage'
-{MockSocket} = require '../../mock/MockSocket'
+{MockSocket} = require '../mock/MockSocket'
 
 describe 'SocketServer', ->
   projectId = uuid.v4()
@@ -40,6 +40,3 @@ describe 'SocketServer', ->
       socketServer.tell projectId, message
       assert.equal sentMessages.length, 1
       assert.equal sentMessages[0], message
-
-
-
