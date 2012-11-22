@@ -7,6 +7,7 @@ run = (task, command, callback) ->
     console.log "#{task} ERROR: ", stderr if stderr
     callback?()
 
+#TODO abort if this fails
 desc 'compile all the coffeescript'
 task 'compile', {async: true}, (params)->
   run "compile", """coffee --output dist --compile .""", complete
