@@ -1,9 +1,8 @@
-_ = require "underscore" unless Meteor?
-
 class FileTree
   constructor: (rawFiles)-> #straight outta mongo
-    @files = _.map rawFiles, (rawFile) ->
-      new File rawFile
+    @files = []
+    rawFiles.forEach (rawFile) =>
+      @files.push(new File rawFile)
 
   sort: ->
     for file in @files
