@@ -10,7 +10,7 @@ class FileTree
 
 class File
   constructor: (rawFile)-> #straight outta mongo
-    @id = rawFile.id
+    @_id = rawFile._id
     @isDir = rawFile.isDir
     @path = rawFile.path
 
