@@ -1,7 +1,7 @@
 browserChannel = require('browserchannel').server
 connect = require('connect')
 uuid = require 'node-uuid'
-{ChannelMessage} = require './ChannelMessage'
+{ChannelMessage, messageAction, messageMaker} = require './ChannelMessage'
 
 class SocketServer
   constructor: (@controller) ->
@@ -23,10 +23,10 @@ class SocketServer
 
     socket.on 'message', (message) =>
       console.log "Received message", message
-      if message.action == ChannelMessage.HANDSHAKE
+      if message.action == messageAction.HANDSHAKE
         @attachSocket socket, message.projectId
         return
-      else if message.action == ChannelMessage.CONFIRM
+      else if message.action == messageAction.CONFIRM
         delete @sentMessages[message.receivedId]
         return
       #Check for any callbacks waiting for a response.
@@ -43,12 +43,12 @@ class SocketServer
         #TODO: Should this be the end of the message?  Do we ever need to route replies?
       @controller?.route message, (err, replyMessage) ->
         if err
-          @send socket, ChannelMessage.errorMessage err.message
+          @send socket, messageMaker.errorMessage err.message
         else
           @send socket, replyMessage
 
       if message.important
-        @send socket, ChannelMessage.confirmationMessage message
+        @send socket, messageMaker.confirmationMessage message
 
     socket.on 'close', (reason) =>
       @detachSocket socket

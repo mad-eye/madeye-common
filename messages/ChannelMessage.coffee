@@ -27,38 +27,42 @@ class ChannelMessage
   validate: () ->
     ok = @id? and @timestamp?
     ok = false if (@action? and @error?) or (!@action? and !@error?)
-    ok = false if (@action == ChannelMessage.CONFIRM) and !@receivedId?
+    ok = false if (@action == messageAction.CONFIRM) and !@receivedId?
 
   toJSON: () ->
     JSON.stringify this
 
+
+#Message Actions
+messageAction =
+  HANDSHAKE : 'handshake'
+  CONFIRM : 'confirm'
+  REQUEST_FILE : 'requestFile'
+  SAVE_FILE : 'saveFile'
+  ADD_FILES : 'addFiles'
+  REMOVE_FILES : 'removeFiles'
+
+messageMaker =
   #Message constructors
-  @handshakeMessage: (projectId) ->
-    return new ChannelMessage ChannelMessage.HANDSHAKE,
+  handshakeMessage: (projectId) ->
+    return new ChannelMessage messageAction.HANDSHAKE,
       projectId: projectId
 
-  @confirmationMessage: (message) ->
-    confirmationMessage = new ChannelMessage(ChannelMessage.CONFIRM)
+  confirmationMessage: (message) ->
+    confirmationMessage = new ChannelMessage(messageAction.CONFIRM)
     confirmationMessage.receivedId = message.id
     confirmationMessage.important = false
     return confirmationMessage
 
-  @fileRequestMessage : (fileId) ->
-    message = new ChannelMessage(ChannelMessage.REQUEST_FILE)
+  fileRequestMessage : (fileId) ->
+    message = new ChannelMessage(messageAction.REQUEST_FILE)
     message.fileId = fileId
     return message
 
-  @errorMessage: (error) ->
+  errorMessage: (error) ->
     message = new ChannelMessage(null)
     message.error = error
 
-#Message Actions
-ChannelMessage.HANDSHAKE = 'handshake'
-ChannelMessage.CONFIRM = 'confirm'
-ChannelMessage.REQUEST_FILE = 'requestFile'
-ChannelMessage.SAVE_FILE = 'saveFile'
-ChannelMessage.ADD_FILES = 'addFiles'
-ChannelMessage.REMOVE_FILES = 'removeFiles'
-
-
 exports.ChannelMessage = ChannelMessage
+exports.messageAction = messageAction
+exports.messageMaker = messageMaker

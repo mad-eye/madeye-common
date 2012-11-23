@@ -1,7 +1,7 @@
 uuid = require 'node-uuid'
 {Settings} = require '../Settings'
 {BCSocket} = require 'browserchannel'
-{ChannelMessage} = require './ChannelMessage'
+{ChannelMessage, messageAction, messageMaker} = require './ChannelMessage'
 
 #WARNING: Must call @destroy when done to close the channel.
 class SocketClient
@@ -15,7 +15,7 @@ class SocketClient
     @socket = null
 
   handleMessage: (message) ->
-    if message.action == ChannelMessage.CONFIRM
+    if message.action == messageAction.CONFIRM
       delete @sentMessages[message.receivedId]
     #Check for any callbacks waiting for a response.
     else if message.replyTo?
@@ -40,7 +40,7 @@ class SocketClient
     else
       @socket = new BCSocket "http://#{Settings.bcHost}:#{Settings.bcPort}/channel", reconnect:true
     @socket.onopen = =>
-      @send new ChannelMessage(ChannelMessage.HANDSHAKE)
+      @send new ChannelMessage(messageAction.HANDSHAKE)
       console.log "opening connection"
     @socket.onmessage = (message) =>
       console.log 'ChannelConnector got message', message
@@ -59,7 +59,7 @@ class SocketClient
   makeSocket: (host, port) ->
     @socket = new BCSocket "http://#{host}:#{port}/channel", reconnect:true
     @socket.onopen = =>
-      @send ChannelMessage.handshakeMessage(projectId)
+      @send messageMaker.handshakeMessage(projectId)
     console.log "opening connection"
     @socket.onmessage = (message) =>
       console.log 'ChannelConnector got message', message
