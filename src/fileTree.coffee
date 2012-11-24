@@ -1,6 +1,6 @@
 class FileTree
   #TODO take a root arg as well so we can show relative paths
-  constructor: (rawFiles)-> #straight outta mongo
+  constructor: (rawFiles, openFolders)-> #straight outta mongo
     @files = []
     rawFiles.forEach (rawFile) =>
       @files.push(new File rawFile)
@@ -8,6 +8,12 @@ class FileTree
   sort: ->
     for file in @files
       @files.sort File.compare
+
+  findByPath: (path)->
+    for file in @files
+      if file.path == path
+        return file
+    null
 
 class File
   constructor: (rawFile)-> #straight outta mongo

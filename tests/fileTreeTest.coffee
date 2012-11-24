@@ -34,3 +34,7 @@ describe "FileTree", ->
       assert.equal tree.files[0].path, "/azkaban"
       assert.equal tree.files[1].path, "/Hogwarts"
       assert.equal tree.files[2].path, "/readme"
+
+    it "can find by path", ->
+      tree = new FileTree [{path: "/readme"}, {path: "/azkaban"}, {path: "/Hogwarts"}]
+      assert.deepEqual tree.findByPath("/readme"), new File({path: "/readme"})
