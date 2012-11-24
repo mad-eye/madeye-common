@@ -1,4 +1,5 @@
 class FileTree
+  #TODO take a root arg as well so we can show relative paths
   constructor: (rawFiles)-> #straight outta mongo
     @files = []
     rawFiles.forEach (rawFile) =>
@@ -14,9 +15,15 @@ class File
     @isDir = rawFile.isDir
     @path = rawFile.path
 
-#TODO support this syntax
-#  @getter "filename", ->
-#    @path.split("/").pop()
+  #TODO see if its easy to make this syntax nicer
+  #something like this maybe?
+  #  @getter "filename", ->
+  #    @path.split("/").pop()
+  @.prototype.__defineGetter__ "filename", ->
+    @path.split("/").pop()
+
+  @.prototype.__defineGetter__ "depth", ->
+    this.path.split("/").length - 2 #don't count directory itself or leading /
 
   @compare: (f1, f2) ->
     [F1_FIRST, F2_FIRST] = [-1,1]
