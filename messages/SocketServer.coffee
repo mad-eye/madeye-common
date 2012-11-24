@@ -13,7 +13,7 @@ class SocketServer
   listen: (bcPort) ->
     @server = connect(
       browserChannel (socket) =>
-        console.log "Found socket", socket
+        #console.log "Found socket", socket
         @connect(socket)
     ).listen(bcPort)
     console.log 'Echo server listening on localhost:' + bcPort
@@ -44,7 +44,7 @@ class SocketServer
       @controller?.route message, (err, replyMessage) ->
         if err
           @send socket, messageMaker.errorMessage err.message
-        else
+        else if replyMessage
           @send socket, replyMessage
 
       if message.important

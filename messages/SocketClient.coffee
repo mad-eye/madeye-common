@@ -5,8 +5,7 @@ uuid = require 'node-uuid'
 
 #WARNING: Must call @destroy when done to close the channel.
 class SocketClient
-  constructor: (@socket) ->
-    console.log "SocketClient constructed with socket", @socket
+  constructor: () ->
     @sentMessages = {}
     @registeredCallbacks = {}
 
@@ -35,20 +34,12 @@ class SocketClient
         console.warn "No onMessage to handle message", message
 
   openConnection: (@projectId, socket) ->
+    console.log "opening connection"
     if socket
       @socket = socket
+      @completeSocket socket
     else
-      @socket = new BCSocket "http://#{Settings.bcHost}:#{Settings.bcPort}/channel", reconnect:true
-    @socket.onopen = =>
-      @send new ChannelMessage(messageAction.HANDSHAKE)
-      console.log "opening connection"
-    @socket.onmessage = (message) =>
-      console.log 'ChannelConnector got message', message
-      @handleMessage message
-    @socket.onerror = (message) =>
-      console.log "ChannelConnector got error" , message
-    @socket.onclose = (message) =>
-      console.log "closing time:", message
+      @socket = @makeSocket(Settings.bcHost, Settings.bcPort)
 
   send: (message, callback) ->
     message.projectId = @projectId
@@ -58,12 +49,14 @@ class SocketClient
 
   makeSocket: (host, port) ->
     @socket = new BCSocket "http://#{host}:#{port}/channel", reconnect:true
+    @completeSocket @socket
+
+  completeSocket: (socket) ->
     @socket.onopen = =>
-      @send messageMaker.handshakeMessage(projectId)
-    console.log "opening connection"
+      @send messageMaker.handshakeMessage
     @socket.onmessage = (message) =>
       console.log 'ChannelConnector got message', message
-    @handleMessage message
+      @handleMessage message
     @socket.onerror = (message) =>
       console.log "ChannelConnector got error" , message
     @socket.onclose = (message) =>

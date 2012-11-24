@@ -22,6 +22,7 @@ class ChannelMessage
     @projectId = null
     @timestamp = new Date().getTime()
     @important = true
+    @data = {}
     _.extend this, options
 
   validate: () ->
@@ -44,9 +45,8 @@ messageAction =
 
 messageMaker =
   #Message constructors
-  handshakeMessage: (projectId) ->
-    return new ChannelMessage messageAction.HANDSHAKE,
-      projectId: projectId
+  handshakeMessage: ->
+    return new ChannelMessage messageAction.HANDSHAKE
 
   confirmationMessage: (message) ->
     confirmationMessage = new ChannelMessage(messageAction.CONFIRM)
@@ -62,6 +62,12 @@ messageMaker =
   errorMessage: (error) ->
     message = new ChannelMessage(null)
     message.error = error
+    return message
+
+  addFilesMessage: (files) ->
+    message = new ChannelMessage(messageAction.ADD_FILES)
+    message.data.files = files
+    return message
 
 exports.ChannelMessage = ChannelMessage
 exports.messageAction = messageAction
