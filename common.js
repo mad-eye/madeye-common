@@ -1,6 +1,6 @@
 require('coffee-script')
-exports.Settings = require('./Settings').Settings
-exports.ChannelMessage = require('./messages/ChannelMessage').ChannelMessage
-exports.SocketServer = require('./messages/SocketServer').SocketServer
-exports.SocketClient = require('./messages/SocketClient').SocketClient
-exports.MockSocket = require('./mock/MockSocket').MockSocket
+exports.Settings = require('./src/Settings').Settings
+exports.ChannelMessage = require('./src/messages/ChannelMessage').ChannelMessage
+exports.SocketServer = require('./src/messages/SocketServer').SocketServer
+exports.SocketClient = require('./src/messages/SocketClient').SocketClient
+exports.MockSocket = require('./tests/mock/MockSocket').MockSocket
