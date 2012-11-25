@@ -26,6 +26,17 @@ describe "File", ->
       readme = new File {path: "/a/readme"}
       assert.equal IN_ORDER, File.compare(donotreadme, readme)
 
+    #tricky because . comes before /
+    it "sorts /config/stuff ahead of config.ru", ->
+      stuff = new File {path: "/config/stuff"}
+      config = new File {path: "/config.ru"}
+      assert.equal IN_ORDER, File.compare(stuff, config)
+
+    it "sorts /config/stuff ahead of /config archive", ->
+      stuff = new File {path: "/config/stuff"}
+      config = new File {path: "/config archive"}
+      assert.equal IN_ORDER, File.compare(stuff, config)
+
 describe "FileTree", ->
   describe "sort", ->
     it "sorts", ->

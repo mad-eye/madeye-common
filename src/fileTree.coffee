@@ -41,9 +41,14 @@ class File
   @.prototype.__defineGetter__ "depth", ->
     this.path.split("/").length - 2 #don't count directory itself or leading /
 
+  [F1_FIRST, F2_FIRST] = [-1,1]
   @compare: (f1, f2) ->
-    [F1_FIRST, F2_FIRST] = [-1,1]
-    if f1.path.toLowerCase() < f2.path.toLowerCase() then F1_FIRST else F2_FIRST
+    #we want / to come before everything so a folder's contents come before anything else
+    #" " is the first printable ascii character, ! is the second
+    #turn all slashes into spaces, and all spaces into !
+    [path1, path2] = [f1.path.replace(/\ /g, "!").replace(/\//g, " "),
+      f2.path.replace(/\ /g, "!").replace(/\//g, " ")]
+    if path1.toLowerCase() < path2.toLowerCase() then F1_FIRST else F2_FIRST
 
 exports.FileTree = FileTree
 exports.File = File
