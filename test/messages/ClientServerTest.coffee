@@ -41,6 +41,7 @@ describe 'SocketServer-integration:', ->
     server.listen Settings.bcPort
   after ->
     server.destroy()
+    server = null
   describe 'Basic Server', ->
     it 'should allow a socket to connect', (done) ->
       makeSocket
@@ -86,6 +87,7 @@ describe 'SocketClient-SocketServer', ->
     server.listen Settings.bcPort
   after ->
     server.destroy()
+    server = null
 
   describe 'openConnection', ->
     it 'should have sent handshake', (done) ->
@@ -142,6 +144,7 @@ describe 'SocketServer-SocketClient', ->
 
   after ->
     server.destroy()
+    server = null
     console.log "**Finished SocketServer-SocketClient"
 
   describe 'sending message from server to client', ->
