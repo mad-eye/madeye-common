@@ -8,14 +8,6 @@ class SocketClient
   constructor: () ->
     @sentMessages = {}
     @registeredCallbacks = {}
-    socket = new BCSocket "http://localhost:#{Settings.bcPort}/channel"
-    socket.onopen = ->
-      message = messageMaker.handshakeMessage()
-      console.log "Client sending message", message
-      console.log "Message json: #{JSON.stringify(message)}"
-      socket.send message
-    socket.onmessage = (message) ->
-      console.log 'Client got message', message
 
   destroy: ->
     @socket.close() if @socket?
@@ -36,11 +28,8 @@ class SocketClient
         callback? null, message
       return
       #TODO: Should this be the end of the message?  Do we ever need to route replies?
-    else
-      if @onMessage
-        @onMessage message
-      else
-        console.warn "No onMessage to handle message", message
+    if @onMessage
+      @onMessage message
 
   openConnection: (@projectId, socket) ->
     console.log "opening connection"
@@ -50,18 +39,19 @@ class SocketClient
 
   send: (message, callback) ->
     message.projectId = @projectId
+    console.log "Client sending message", message
     @socket.send message
     @sentMessages[message.id] = message
     @registeredCallbacks[message.id] = callback
 
   completeSocket: (socket) ->
     @socket.onopen = =>
-      @send messageMaker.handshakeMessage
+      @send messageMaker.handshakeMessage()
     @socket.onmessage = (message) =>
-      console.log 'ChannelConnector got message', message
+      console.log 'Socket (client) received message', message
       @handleMessage message
     @socket.onerror = (message) =>
-      console.log "ChannelConnector got error" , message
+      console.log "Socket (client) received error" , message
     @socket.onclose = (message) =>
       console.log "closing time:", message
 

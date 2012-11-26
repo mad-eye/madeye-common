@@ -17,6 +17,7 @@ class SocketServer
 
   destroy: ->
     socket.stop() for projectId, socket of @liveSockets
+    @server.close()
     @server = null
     @initialize()
 

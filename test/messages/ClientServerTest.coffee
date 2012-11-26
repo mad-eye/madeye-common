@@ -81,15 +81,31 @@ describe 'SocketServer-integration:', ->
           done()
 
 
-#describe 'SocketClient-SocketServer', ->
+describe 'SocketClient-SocketServer', ->
+  server = client = controller = null
+  projectId = uuid.v4()
+  before ->
+    controller = { route: (msg, callback) ->
+      console.log "Routing message (has callback: #{callback?}):", msg.id
+      replyMessage = messageMaker.message
+        action: 'test'
+        replyTo: msg.id
+        shouldConfirm: false
+      callback? null, replyMessage
+    }
+    server = new SocketServer controller
+    server.listen Settings.bcPort
+  after ->
+    server.destroy()
 
-
-  
-  #describe 'startup', ->
-  #  it 'should have received handshake', ->
-  #    #client = new SocketClient()
-  #    #client.openConnection projectId
-  #    assert.ok server.liveSockets[projectId]
+  describe 'openConnection', ->
+    it 'should have sent handshake', (done) ->
+      client = new SocketClient()
+      client.onMessage = (msg) ->
+        console.log "Calling client.onMessage for message #{msg.id}"
+        assert.ok server.liveSockets[projectId]
+        done()
+      client.openConnection projectId
 
 #  describe 'sending client to server', ->
 #    before ->
