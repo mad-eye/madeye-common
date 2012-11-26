@@ -62,6 +62,13 @@ messageMaker =
         files : files
     }
 
+  removeFilesMessage: (files) ->
+    @message {
+      action : messageAction.REMOVE_FILES
+      data :
+        files : files
+    }
+
   
 
 exports.messageAction = messageAction
