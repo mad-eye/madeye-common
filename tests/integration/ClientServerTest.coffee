@@ -6,7 +6,7 @@ browserChannel = require('browserchannel').server
 {BCSocket} = require 'browserchannel'
 {SocketClient} = require '../../src/messages/SocketClient'
 {SocketServer} = require '../../src/messages/SocketServer'
-{ChannelMessage, messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
+{messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
 {Settings} = require '../../src/Settings'
 
 #TODO: Clean up the redundancy here.  One problem is that often the setup is slightly different, and needs to call the done() method.
@@ -128,7 +128,6 @@ describe 'SocketServer:', ->
     server = null
     before (done) ->
       server = newServer()
-      console.log "**Starting SocketServer-SocketClient"
       controller = { route: (msg, callback) ->
         #console.log "Routing message (has callback: #{callback?}):", msg.id
         #callback? null, null
@@ -150,11 +149,10 @@ describe 'SocketServer:', ->
 
     after ->
       server.destroy()
-      console.log "**Finished SocketServer-SocketClient"
     afterEach ->
       server.onHandshake = null
 
-    it 'should trigger tell callback fweep', (done) ->
+    it 'should trigger tell callback', (done) ->
       message = messageMaker.requestFileMessage(fileId)
       server.tell projectId, message, (err, responseMsg) ->
         console.log "Calling server.tell callback."

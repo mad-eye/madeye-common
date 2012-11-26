@@ -1,7 +1,7 @@
 assert = require 'assert'
 uuid = require 'node-uuid'
 {SocketServer} = require '../../src/messages/SocketServer'
-{ChannelMessage, messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
+{messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
 {MockSocket} = require '../mock/MockSocket'
 
 describe 'SocketServer', ->
@@ -20,13 +20,16 @@ describe 'SocketServer', ->
       assert.equal socketServer.liveSockets[projectId], null
 
   describe 'connect', ->
-    before ->
-      handshakeMessage = new ChannelMessage(messageAction.HANDSHAKE)
+    before (done) ->
+      handshakeMessage = messageMaker.handshakeMessage()
       handshakeMessage.projectId = projectId
 
       socketServer = new SocketServer()
       socket = new MockSocket()
       socketServer.connect socket
+      socketServer.onHandshake = ->
+        console.log "Receiving handshake"
+        done()
       socket.receive handshakeMessage
     it 'should store socket via projectId', ->
       assert.equal socket, socketServer.liveSockets[projectId]

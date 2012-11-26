@@ -1,7 +1,7 @@
 browserChannel = require('browserchannel').server
 connect = require('connect')
 uuid = require 'node-uuid'
-{ChannelMessage, messageAction, messageMaker} = require './ChannelMessage'
+{messageAction, messageMaker} = require './ChannelMessage'
 {Settings} = require '../Settings'
 
 class SocketServer
@@ -52,7 +52,7 @@ class SocketServer
       @onHandshake? message.projectId
       return
     else
-      @controller.route message, (err, replyMessage) =>
+      @controller?.route message, (err, replyMessage) =>
         console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
         if err
           console.error "Replying with error: #{err.message}"

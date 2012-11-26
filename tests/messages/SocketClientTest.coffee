@@ -2,7 +2,7 @@ assert = require 'assert'
 uuid = require 'node-uuid'
 {SocketClient} = require '../../src/messages/SocketClient'
 {MockSocket} = require '../mock/MockSocket'
-{ChannelMessage, messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
+{messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
 
 
 describe 'SocketClient', ->
