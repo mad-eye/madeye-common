@@ -107,20 +107,22 @@ describe 'SocketClient-SocketServer', ->
         done()
       client.openConnection projectId
 
-#  describe 'sending client to server', ->
-#    before ->
-#      client = new SocketClient()
-#      client.openConnection projectId
+  describe 'sending message from client to server', ->
+    before ->
+      client = new SocketClient()
+      client.openConnection projectId
       
-#    it 'should be received by server', (done) ->
-#      message = messageMaker.addFilesMessage [{
-#        path: 'some/path'
-#        isDir: false
-#      }]
-#      client.send message, (err, msg) ->
-#        assert.equal err, null
-#        assert.ok msg
-#        done()
+    it 'should trigger callback', (done) ->
+      message = messageMaker.addFilesMessage [{
+        path: 'some/path'
+        isDir: false
+      }]
+      client.send message, (err, msg) ->
+        assert.equal err, null
+        assert.ok msg
+        assert.equal msg.replyTo, message.id
+        console.log "Calling done() in callback"
+        done()
       
 
 
