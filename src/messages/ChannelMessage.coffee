@@ -29,9 +29,6 @@ class ChannelMessage
     ok = false if (@action? and @error?) or (!@action? and !@error?)
     ok = false if (@action == ChannelMessage.CONFIRM) and !@receivedId?
 
-  toJSON: () ->
-    JSON.stringify this
-
   #Message constructors
   @confirmationMessage: (message) ->
     confirmationMessage = new ChannelMessage(ChannelMessage.CONFIRM)
