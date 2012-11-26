@@ -46,36 +46,42 @@ describe 'SocketServer-integration:', ->
           message = messageMaker.message
             action: 'test'
             shouldConfirm: false
-          console.log "Client sending message", message
+          #console.log "Client sending message", message
           @send message
         onmessage: (msg) ->
           console.log "Client receiving message", msg.id
           assert.ok msg
           done()
 
-
-
   describe 'handshake message', ->
     socket = message = null
-    it 'should confirm handshake and store socket', (done) ->
+    it 'should confirm handshake', (done) ->
       makeSocket
         onopen: ->
           message = messageMaker.handshakeMessage()
           message.projectId = projectId
-          console.log "Client sending message", message
+          #console.log "Client sending message", message
           @send message
         onmessage : (msg) ->
           console.log 'Client got message', msg.id
           assert.equal msg.action, messageAction.CONFIRM
           assert.equal msg.receivedId, message.id
+          done()
+
+    it 'should store socket', (done) ->
+      makeSocket
+        onopen: ->
+          message = messageMaker.handshakeMessage()
+          message.projectId = projectId
+          #console.log "Client sending message", message
+          @send message
+        onmessage : (msg) ->
+          console.log 'Client got message', msg.id
           assert.ok server.liveSockets[projectId]
           done()
 
 
-
-
-
-describe 'SocketClient-SocketServer', ->
+#describe 'SocketClient-SocketServer', ->
 
 
   
