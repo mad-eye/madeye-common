@@ -33,7 +33,7 @@ describe 'SocketClient', ->
       assert.equal socket.readyState, MockSocket.CLOSED
     
   describe 'send', ->
-    message = new ChannelMessage(messageAction.ADD_FILES)
+    message = messageMaker.addFilesMessage()
     sentMessages = []
     before ->
       socket = new MockSocket()
@@ -59,7 +59,7 @@ describe 'SocketClient', ->
       receivedMsg = null
       socketClient.onMessage = (msg) ->
         receivedMsg = msg
-      message = new ChannelMessage(messageAction.REQUEST_FILE)
+      message = messageMaker.fileRequestMessage uuid.v4()
       socket.receive message
       assert.equal message, receivedMsg
 

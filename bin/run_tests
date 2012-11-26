@@ -17,4 +17,4 @@ do
     shift
 done
 
-find test -name '*Test.coffee' -print0 | xargs -0 node_modules/mocha/bin/mocha $WATCH $GREP --compilers coffee:coffee-script
+find test -name '*Test.coffee' -print0 | xargs -0 bin/mochac $WATCH $GREP 

@@ -44,30 +44,44 @@ messageAction =
   REMOVE_FILES : 'removeFiles'
 
 messageMaker =
+  message : (options) ->
+    message = _.extend {
+      id : uuid.v4()
+      timestamp : new Date().getTime()
+      shouldConfirm : true
+      data : {}
+    }, options
+
   #Message constructors
   handshakeMessage: ->
-    return new ChannelMessage messageAction.HANDSHAKE
+    @message action: messageAction.HANDSHAKE
 
   confirmationMessage: (message) ->
-    confirmationMessage = new ChannelMessage(messageAction.CONFIRM)
-    confirmationMessage.receivedId = message.id
-    confirmationMessage.important = false
-    return confirmationMessage
+    @message {
+      action : messageAction.CONFIRM
+      receivedId : message.id
+      shouldConfirm : false
+    }
 
   fileRequestMessage : (fileId) ->
-    message = new ChannelMessage(messageAction.REQUEST_FILE)
-    message.fileId = fileId
-    return message
+    @message {
+      action : messageAction.REQUEST_FILE
+      fileId : fileId
+    }
 
   errorMessage: (error) ->
-    message = new ChannelMessage(null)
-    message.error = error
-    return message
+    @message {
+      error : error
+    }
 
   addFilesMessage: (files) ->
-    message = new ChannelMessage(messageAction.ADD_FILES)
-    message.data.files = files
-    return message
+    @message {
+      action : messageAction.ADD_FILES
+      data :
+        files : files
+    }
+
+  
 
 exports.ChannelMessage = ChannelMessage
 exports.messageAction = messageAction

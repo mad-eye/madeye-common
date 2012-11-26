@@ -8,22 +8,31 @@ class SocketClient
   constructor: () ->
     @sentMessages = {}
     @registeredCallbacks = {}
+    socket = new BCSocket "http://localhost:#{Settings.bcPort}/channel"
+    socket.onopen = ->
+      message = messageMaker.handshakeMessage()
+      console.log "Client sending message", message
+      console.log "Message json: #{JSON.stringify(message)}"
+      socket.send message
+    socket.onmessage = (message) ->
+      console.log 'Client got message', message
 
   destroy: ->
     @socket.close() if @socket?
     @socket = null
 
   handleMessage: (message) ->
+    console.log "Client received message #{message.id}"
     if message.action == messageAction.CONFIRM
       delete @sentMessages[message.receivedId]
     #Check for any callbacks waiting for a response.
     else if message.replyTo?
-      #console.log "Checking registered callback to #{message.replyTo}"
+      console.log "Checking registered callback to #{message.replyTo}"
       callback = @registeredCallbacks[message.replyTo]
       if message.error
         callback? {error: message.error}
       else
-        #console.log "Invoking registered callback to #{message.replyTo}", callback
+        console.log "Invoking registered callback to #{message.replyTo}", callback
         callback? null, message
       return
       #TODO: Should this be the end of the message?  Do we ever need to route replies?
@@ -35,21 +44,15 @@ class SocketClient
 
   openConnection: (@projectId, socket) ->
     console.log "opening connection"
-    if socket
-      @socket = socket
-      @completeSocket socket
-    else
-      @socket = @makeSocket(Settings.bcHost, Settings.bcPort)
+    @socket = socket ? new BCSocket "http://#{Settings.bcHost}:#{Settings.bcPort}/channel", reconnect:true
+    @completeSocket @socket
+      
 
   send: (message, callback) ->
     message.projectId = @projectId
     @socket.send message
     @sentMessages[message.id] = message
     @registeredCallbacks[message.id] = callback
-
-  makeSocket: (host, port) ->
-    @socket = new BCSocket "http://#{host}:#{port}/channel", reconnect:true
-    @completeSocket @socket
 
   completeSocket: (socket) ->
     @socket.onopen = =>
