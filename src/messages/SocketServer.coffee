@@ -16,7 +16,7 @@ class SocketServer
         console.log "Found socket", socket
         @connect(socket)
     ).listen(bcPort)
-    console.log 'Echo server listening on localhost:' + bcPort
+    console.log 'SocketServer listening on localhost:' + bcPort
 
   connect: (@socket) ->
     console.log "New socket: #{socket.id} from #{socket.address}"
@@ -41,7 +41,7 @@ class SocketServer
             callback null, message
         return
         #TODO: Should this be the end of the message?  Do we ever need to route replies?
-      @controller?.route message, (err, replyMessage) ->
+      @controller?.route message, (err, replyMessage) =>
         if err
           @send socket, ChannelMessage.errorMessage err.message
         else
@@ -68,8 +68,8 @@ class SocketServer
     if message.important
       @sentMessages[message.id] = message
 
-    
-  #callback = (err, data) ->, 
+
+  #callback = (err, data) ->,
   tell: (projectId, message, callback) ->
     console.log "Sending message to #{projectId}:", message
     socket = @liveSockets[projectId]
@@ -79,5 +79,5 @@ class SocketServer
     @send socket, message
     @registeredCallbacks[message.id] = callback
 
-  
+
 exports.SocketServer = SocketServer
