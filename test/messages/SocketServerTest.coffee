@@ -32,7 +32,7 @@ describe 'SocketServer', ->
       assert.equal socket, socketServer.liveSockets[projectId]
 
     it 'should direct tells to the right place', ->
-      message = messageMaker.fileRequestMessage uuid.v4()
+      message = messageMaker.requestFileMessage uuid.v4()
       sentMessages = []
       socket.onsend = (msg) ->
         console.log "Socket is sending message #{msg.id}"

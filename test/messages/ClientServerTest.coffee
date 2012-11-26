@@ -9,6 +9,8 @@ browserChannel = require('browserchannel').server
 {ChannelMessage, messageAction, messageMaker} = require '../../messages/ChannelMessage'
 {Settings} = require '../../Settings'
 
+#TODO: Clean up the redundancy here.  One problem is that often the setup is slightly different, and needs to call the done() method.
+
 ## Tests
 
 #hooks:
@@ -55,30 +57,17 @@ describe 'SocketServer-integration:', ->
 
   describe 'handshake message', ->
     socket = message = null
-    it 'should confirm handshake', (done) ->
-      makeSocket
-        onopen: ->
-          message = messageMaker.handshakeMessage()
-          message.projectId = projectId
-          #console.log "Client sending message", message
-          @send message
-        onmessage : (msg) ->
-          console.log 'Client got message', msg.id
-          assert.equal msg.action, messageAction.CONFIRM
-          assert.equal msg.receivedId, message.id
-          done()
-
     it 'should store socket', (done) ->
+      server.onHandshake = (projId) ->
+        assert.equal projId, projectId
+        assert.ok @liveSockets[projId]
+        done()
       makeSocket
         onopen: ->
           message = messageMaker.handshakeMessage()
           message.projectId = projectId
           #console.log "Client sending message", message
           @send message
-        onmessage : (msg) ->
-          console.log 'Client got message', msg.id
-          assert.ok server.liveSockets[projectId]
-          done()
 
 
 describe 'SocketClient-SocketServer', ->
@@ -100,11 +89,11 @@ describe 'SocketClient-SocketServer', ->
 
   describe 'openConnection', ->
     it 'should have sent handshake', (done) ->
-      client = new SocketClient()
-      client.onMessage = (msg) ->
-        console.log "Calling client.onMessage for message #{msg.id}"
-        assert.ok server.liveSockets[projectId]
+      server.onHandshake = (projId) ->
+        assert.equal projId, projectId
+        assert.ok @liveSockets[projId]
         done()
+      client = new SocketClient()
       client.openConnection projectId
 
   describe 'sending message from client to server', ->
@@ -125,4 +114,43 @@ describe 'SocketClient-SocketServer', ->
         done()
       
 
+describe 'SocketServer-SocketClient', ->
+  server = client = null
+  projectId = uuid.v4()
+  fileId = uuid.v4()
+  before (done) ->
+    console.log "**Starting SocketServer-SocketClient"
+    controller = { route: (msg, callback) ->
+      console.log "Routing message (has callback: #{callback?}):", msg.id
+      #callback? null, null
+    }
+    server = new SocketServer controller
+    server.listen Settings.bcPort
+    server.onHandshake = (projId) ->
+      console.log "Got handshake for #{projId}"
+      done()
+    client = new SocketClient()
+    client.openConnection projectId
+    client.onMessage = (msg) ->
+      console.log "Calling client.onMessage callback."
+      if msg.action == messageAction.REQUEST_FILE
+        replyMsg = messageMaker.message {
+          action : msg.action
+          replyTo : msg.id
+        }
+        @send replyMsg
+
+  after ->
+    server.destroy()
+    console.log "**Finished SocketServer-SocketClient"
+
+  describe 'sending message from server to client', ->
+    it 'should trigger tell callback fweep', (done) ->
+      message = messageMaker.requestFileMessage(fileId)
+      server.tell projectId, message, (err, responseMsg) ->
+        console.log "Calling server.tell callback."
+        assert.equal err, null
+        assert.ok responseMsg
+        assert.equal responseMsg.replyTo, message.id
+        done()
 

@@ -15,16 +15,14 @@ class SocketClient
 
   handleMessage: (message) ->
     console.log "Client received message #{message.id}"
-    if message.action == messageAction.CONFIRM
-      delete @sentMessages[message.receivedId]
     #Check for any callbacks waiting for a response.
-    else if message.replyTo?
+    if message.replyTo?
       console.log "Checking registered callback to #{message.replyTo}"
       callback = @registeredCallbacks[message.replyTo]
       if message.error
         callback? {error: message.error}
       else
-        console.log "Invoking registered callback to #{message.replyTo}", callback
+        #console.log "Invoking registered callback to #{message.replyTo}", callback
         callback? null, message
       return
       #TODO: Should this be the end of the message?  Do we ever need to route replies?
@@ -40,8 +38,16 @@ class SocketClient
   send: (message, callback) ->
     message.projectId = @projectId
     console.log "Client sending message", message
-    @socket.send message
-    @sentMessages[message.id] = message
+    @socket.send message, (err) ->
+      if err
+        console.error "Error delivering message #{message.id}:", err
+        #TODO: Should retry delivery?
+      else
+        #console.log "Message #{message.id} delivered to server."
+        delete @sendMessages[message.id]
+    if message.shouldConfirm
+      #console.log "Storing message #{message.id} for confirmation."
+      @sentMessages[message.id] = message
     @registeredCallbacks[message.id] = callback
 
   completeSocket: (socket) ->
@@ -50,8 +56,9 @@ class SocketClient
     @socket.onmessage = (message) =>
       console.log 'Socket (client) received message', message
       @handleMessage message
-    @socket.onerror = (message) =>
-      console.log "Socket (client) received error" , message
+    @socket.onerror = (errorMsg, errorCode) ->
+      console.error "Error on socket:", msg, errCode
+      throw new Error msg
     @socket.onclose = (message) =>
       console.log "closing time:", message
 

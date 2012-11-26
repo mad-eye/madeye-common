@@ -59,7 +59,7 @@ describe 'SocketClient', ->
       receivedMsg = null
       socketClient.onMessage = (msg) ->
         receivedMsg = msg
-      message = messageMaker.fileRequestMessage uuid.v4()
+      message = messageMaker.requestFileMessage uuid.v4()
       socket.receive message
       assert.equal message, receivedMsg
 

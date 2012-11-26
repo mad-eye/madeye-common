@@ -63,7 +63,7 @@ messageMaker =
       shouldConfirm : false
     }
 
-  fileRequestMessage : (fileId) ->
+  requestFileMessage : (fileId) ->
     @message {
       action : messageAction.REQUEST_FILE
       fileId : fileId
