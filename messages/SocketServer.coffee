@@ -34,9 +34,7 @@ class SocketServer
 
     socket.on 'message', (message) =>
       console.log "Socket #{socket.id} sent message #{message.id}"
-      unless @controller
-        console.error "Missing controller!"
-        throw new Error 'Missing controller!'
+      console.error "Missing controller!" unless @controller
       @handleMessage message, socket
 
     socket.on 'error', (errorMsg, errorCode) ->

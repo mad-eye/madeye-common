@@ -1,2 +1,2 @@
 #! /bin/sh
-node_modules/mocha/bin/mocha --compilers coffee:coffee-script $*
+node_modules/mocha/bin/mocha --compilers coffee:coffee-script --globals createHandler $*

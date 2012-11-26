@@ -13,35 +13,36 @@ browserChannel = require('browserchannel').server
 
 ## Tests
 
+port = Settings.bcPort
+
+newServer = ->
+  server = new SocketServer
+  server.listen ++port
+  return server
+
+newSocket = ->
+  new BCSocket "http://localhost:#{port}/channel"
+
 #hooks:
 #  onmessage : (msg) -> ...
 #  onopen : -> ...
 makeSocket = (hooks) ->
-  socket = new BCSocket "http://localhost:#{Settings.bcPort}/channel"
+  socket = newSocket()
   socket.onerror = (msg, errCode) ->
     console.error "Error on socket:", msg, errCode
     throw new Error msg
   _.extend(socket, hooks)
   return socket
 
-resetServer = (server) ->
-  server.controller = null
-  server.initialize()
-  server.onHandshake = null
 
 describe 'SocketServer:', ->
-  server = null
-  before ->
-    server = new SocketServer
-    server.listen Settings.bcPort
-
-  after ->
-    server.destroy()
     
   #XXX: Find way to destroy server after (in-between?) tests.
   describe 'socket', ->
     projectId = uuid.v4()
+    server = null
     before ->
+      server = newServer()
       controller = { route: (msg, callback) ->
         console.log "Routing message (has callback: #{callback?}):", msg.id
         replyMessage = messageMaker.message
@@ -52,7 +53,7 @@ describe 'SocketServer:', ->
       }
       server.controller = controller
     after ->
-      resetServer(server)
+      server.destroy()
 
     it 'should be allowed to connect', (done) ->
       makeSocket
@@ -76,13 +77,14 @@ describe 'SocketServer:', ->
         onopen: ->
           message = messageMaker.handshakeMessage()
           message.projectId = projectId
-          #console.log "Client sending message", message
           @send message
 
 
   describe 'SocketClient', ->
     projectId = uuid.v4()
+    server = null
     before ->
+      server = newServer()
       controller = { route: (msg, callback) ->
         console.log "Routing message (has callback: #{callback?}):", msg.id
         replyMessage = messageMaker.message
@@ -93,7 +95,9 @@ describe 'SocketServer:', ->
       }
       server.controller = controller
     after ->
-      resetServer(server)
+      server.destroy()
+    afterEach ->
+      server.onHandshake = null
 
     it 'should send handshake on openConnection', (done) ->
       server.onHandshake = (projId) ->
@@ -101,11 +105,11 @@ describe 'SocketServer:', ->
         assert.ok @liveSockets[projId]
         done()
       client = new SocketClient()
-      client.openConnection projectId
+      client.openConnection projectId, newSocket()
 
     it 'should trigger callback on message', (done) ->
       client = new SocketClient()
-      client.openConnection projectId
+      client.openConnection projectId, newSocket()
       message = messageMaker.addFilesMessage [{
         path: 'some/path'
         isDir: false
@@ -121,7 +125,9 @@ describe 'SocketServer:', ->
   describe 'sending messages to client', ->
     projectId = uuid.v4()
     fileId = uuid.v4()
+    server = null
     before (done) ->
+      server = newServer()
       console.log "**Starting SocketServer-SocketClient"
       controller = { route: (msg, callback) ->
         #console.log "Routing message (has callback: #{callback?}):", msg.id
@@ -140,11 +146,13 @@ describe 'SocketServer:', ->
             replyTo : msg.id
           }
           @send replyMsg
-      client.openConnection projectId
+      client.openConnection projectId, newSocket()
 
     after ->
-      resetServer(server)
+      server.destroy()
       console.log "**Finished SocketServer-SocketClient"
+    afterEach ->
+      server.onHandshake = null
 
     it 'should trigger tell callback fweep', (done) ->
       message = messageMaker.requestFileMessage(fileId)
