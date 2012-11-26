@@ -1,7 +1,7 @@
 assert = require 'assert'
 uuid = require 'node-uuid'
 {SocketServer} = require '../../messages/SocketServer'
-{ChannelMessage} = require '../../messages/ChannelMessage'
+{ChannelMessage, messageAction, messageMaker} = require '../../messages/ChannelMessage'
 {MockSocket} = require '../mock/MockSocket'
 
 describe 'SocketServer', ->
@@ -21,7 +21,7 @@ describe 'SocketServer', ->
 
   describe 'connect', ->
     before ->
-      handshakeMessage = new ChannelMessage(ChannelMessage.HANDSHAKE)
+      handshakeMessage = new ChannelMessage(messageAction.HANDSHAKE)
       handshakeMessage.projectId = projectId
 
       socketServer = new SocketServer()
@@ -32,7 +32,7 @@ describe 'SocketServer', ->
       assert.equal socket, socketServer.liveSockets[projectId]
 
     it 'should direct tells to the right place', ->
-      message = ChannelMessage.fileRequestMessage uuid.v4()
+      message = messageMaker.requestFileMessage uuid.v4()
       sentMessages = []
       socket.onsend = (msg) ->
         console.log "Socket is sending message #{msg.id}"

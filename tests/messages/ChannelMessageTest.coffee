@@ -1,12 +1,12 @@
 assert = require 'assert'
-{ChannelMessage} = require '../../messages/ChannelMessage'
+{ChannelMessage, messageAction, messageMaker} = require '../../messages/ChannelMessage'
 
 describe 'ChannelMessage', ->
   describe 'confirmationMessage', ->
     origMessage = confMessage = null
     before ->
       origMessage = new ChannelMessage(null)
-      confMessage = ChannelMessage.confirmationMessage origMessage
+      confMessage = messageMaker.confirmationMessage origMessage
     it 'should not be null', ->
       assert.ok confMessage
     it 'should have action "confirm"', ->

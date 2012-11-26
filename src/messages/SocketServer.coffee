@@ -1,20 +1,31 @@
 browserChannel = require('browserchannel').server
 connect = require('connect')
 uuid = require 'node-uuid'
-{ChannelMessage} = require './ChannelMessage'
+{ChannelMessage, messageAction, messageMaker} = require './ChannelMessage'
+{Settings} = require '../Settings'
 
 class SocketServer
   constructor: (@controller) ->
+    #console.log "Constructing with controller", @controller
+    @initialize()
+  
+  initialize: ->
     @liveSockets = {} # {projectId: socket}, to look sockets up for apogee-dementor communication
     @projectIdMap = {} # {socketId:projectId}, to look up entries in liveSockets for deletion
     @sentMessages = {}
     @registeredCallbacks = {}
 
+  destroy: ->
+    socket.stop() for projectId, socket of @liveSockets
+    @server?.close()
+    @server = null
+    @initialize()
+
+
   listen: (bcPort) ->
     @server = connect(
       browserChannel (socket) =>
-        console.log "Found socket", socket
-        @connect(socket)
+        @connect socket
     ).listen(bcPort)
     console.log 'SocketServer listening on localhost:' + bcPort
 
@@ -22,37 +33,46 @@ class SocketServer
     console.log "New socket: #{socket.id} from #{socket.address}"
 
     socket.on 'message', (message) =>
-      console.log "Received message", message
-      if message.action == ChannelMessage.HANDSHAKE
-        @attachSocket socket, message.projectId
-        return
-      else if message.action == ChannelMessage.CONFIRM
-        delete @sentMessages[message.receivedId]
-        return
-      #Check for any callbacks waiting for a response.
-      if message.replyTo?
-        #console.log "Checking registered callback to #{message.replyTo}"
-        callback = @registeredCallbacks[message.replyTo]
-        if callback
-          #console.log "Invoking registered callback to #{message.replyTo}", callback
-          if message.error
-            callback {error: message.error}
-          else
-            callback null, message
-        return
-        #TODO: Should this be the end of the message?  Do we ever need to route replies?
-      @controller?.route message, (err, replyMessage) =>
-        if err
-          @send socket, ChannelMessage.errorMessage err.message
-        else
-          @send socket, replyMessage
+      console.log "Socket #{socket.id} sent message #{message.id}"
+      console.error "Missing controller!" unless @controller
+      @handleMessage message, socket
 
-      if message.important
-        @send socket, ChannelMessage.confirmationMessage message
+    socket.on 'error', (errorMsg, errorCode) ->
+      console.error "Error on socket:", msg, errCode
+      throw new Error msg
 
     socket.on 'close', (reason) =>
       @detachSocket socket
       console.log "Socket #{socket.id} disconnected (#{reason})"
+
+  handleMessage: (message, socket) ->
+    if message.action == messageAction.HANDSHAKE
+      console.log "Receiving handshake for project #{message.projectId}"
+      @attachSocket socket, message.projectId
+      @onHandshake? message.projectId
+      return
+    else
+      @controller.route message, (err, replyMessage) =>
+        console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
+        if err
+          console.error "Replying with error: #{err.message}"
+          @send socket, messageMaker.errorMessage err.message
+        else if replyMessage
+          #console.log "Replying with message:", replyMessage
+          @send socket, replyMessage
+
+    #Check for any callbacks waiting for a response.
+    if message.replyTo?
+      console.log "Checking registered callback to #{message.replyTo}"
+      callback = @registeredCallbacks[message.replyTo]
+      if callback
+        #console.log "Invoking registered callback to #{message.replyTo}", callback
+        if message.error
+          callback {error: message.error}
+        else
+          callback null, message
+      return
+      #TODO: Should this be the end of the message?  Do we ever need to route replies?
 
   attachSocket: (socket, projectId) ->
     @projectIdMap[socket.id] = projectId
@@ -63,9 +83,17 @@ class SocketServer
     delete @liveSockets[projectId] if projectId
     delete @projectIdMap[socket.id]
 
-  send: (socket, message) ->
-    socket.send message
-    if message.important
+  send: (socket, message) =>
+    console.log "Server sending message #{message.id} to socket #{socket.id}"
+    if message.shouldConfirm
+      console.log "Storing message #{message.id} for confirmation."
+    socket.send message, (err) =>
+      if err
+        console.error "Error delivering message #{message.id}:", err
+        #TODO: Should retry delivery?
+      else
+        console.log "Message #{message.id} delivered to client."
+        delete @sentMessages[message.id]
       @sentMessages[message.id] = message
 
 

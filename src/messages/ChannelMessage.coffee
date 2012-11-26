@@ -22,36 +22,64 @@ class ChannelMessage
     @projectId = null
     @timestamp = new Date().getTime()
     @important = true
+    @data = {}
     _.extend this, options
 
   validate: () ->
     ok = @id? and @timestamp?
     ok = false if (@action? and @error?) or (!@action? and !@error?)
-    ok = false if (@action == ChannelMessage.CONFIRM) and !@receivedId?
+    ok = false if (@action == messageAction.CONFIRM) and !@receivedId?
 
-  #Message constructors
-  @confirmationMessage: (message) ->
-    confirmationMessage = new ChannelMessage(ChannelMessage.CONFIRM)
-    confirmationMessage.receivedId = message.id
-    confirmationMessage.important = false
-    return confirmationMessage
-
-  @fileRequestMessage : (fileId) ->
-    message = new ChannelMessage(ChannelMessage.REQUEST_FILE)
-    message.fileId = fileId
-    return message
-
-  @errorMessage: (error) ->
-    message = new ChannelMessage(null)
-    message.error = error
 
 #Message Actions
-ChannelMessage.HANDSHAKE = 'handshake'
-ChannelMessage.CONFIRM = 'confirm'
-ChannelMessage.REQUEST_FILE = 'requestFile'
-ChannelMessage.SAVE_FILE = 'saveFile'
-ChannelMessage.ADD_FILES = 'addFiles'
-ChannelMessage.REMOVE_FILES = 'removeFiles'
+messageAction =
+  HANDSHAKE : 'handshake'
+  CONFIRM : 'confirm'
+  REQUEST_FILE : 'requestFile'
+  SAVE_FILE : 'saveFile'
+  ADD_FILES : 'addFiles'
+  REMOVE_FILES : 'removeFiles'
 
+messageMaker =
+  message : (options) ->
+    message = _.extend {
+      id : uuid.v4()
+      timestamp : new Date().getTime()
+      shouldConfirm : true
+      data : {}
+    }, options
+
+  #Message constructors
+  handshakeMessage: ->
+    @message action: messageAction.HANDSHAKE
+
+  confirmationMessage: (message) ->
+    @message {
+      action : messageAction.CONFIRM
+      receivedId : message.id
+      shouldConfirm : false
+    }
+
+  requestFileMessage : (fileId) ->
+    @message {
+      action : messageAction.REQUEST_FILE
+      fileId : fileId
+    }
+
+  errorMessage: (error) ->
+    @message {
+      error : error
+    }
+
+  addFilesMessage: (files) ->
+    @message {
+      action : messageAction.ADD_FILES
+      data :
+        files : files
+    }
+
+  
 
 exports.ChannelMessage = ChannelMessage
+exports.messageAction = messageAction
+exports.messageMaker = messageMaker
