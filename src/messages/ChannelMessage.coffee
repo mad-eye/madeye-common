@@ -6,6 +6,7 @@ _ = require 'underscore'
 messageAction =
   HANDSHAKE : 'handshake'
   CONFIRM : 'confirm'
+  REPLY : 'reply'
   REQUEST_FILE : 'requestFile'
   SAVE_FILE : 'saveFile'
   ADD_FILES : 'addFiles'
@@ -42,6 +43,14 @@ messageMaker =
       action : messageAction.CONFIRM
       receivedId : message.id
       shouldConfirm : false
+    }
+
+  replyMessage: (message, data) ->
+    @message {
+      action : messageAction.REPLY
+      replyTo : message.id
+      repliedAction : message.action
+      data : data
     }
 
   requestFileMessage : (fileId) ->
