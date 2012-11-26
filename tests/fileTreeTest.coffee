@@ -1,4 +1,4 @@
-FileTree = require("../filetree").FileTree
+FileTree = require("../src/filetree").FileTree
 File = require("../src/filetree").File
 assert = require "assert"
 

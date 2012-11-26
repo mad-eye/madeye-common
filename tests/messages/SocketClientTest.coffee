@@ -1,8 +1,8 @@
 assert = require 'assert'
 uuid = require 'node-uuid'
-{SocketClient} = require '../../messages/SocketClient'
+{SocketClient} = require '../../src/messages/SocketClient'
 {MockSocket} = require '../mock/MockSocket'
-{ChannelMessage, messageAction, messageMaker} = require '../../messages/ChannelMessage'
+{ChannelMessage, messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
 
 
 describe 'SocketClient', ->

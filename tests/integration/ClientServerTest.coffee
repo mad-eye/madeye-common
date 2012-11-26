@@ -4,10 +4,10 @@ uuid = require 'node-uuid'
 connect = require 'connect'
 browserChannel = require('browserchannel').server
 {BCSocket} = require 'browserchannel'
-{SocketClient} = require '../../messages/SocketClient'
-{SocketServer} = require '../../messages/SocketServer'
-{ChannelMessage, messageAction, messageMaker} = require '../../messages/ChannelMessage'
-{Settings} = require '../../Settings'
+{SocketClient} = require '../../src/messages/SocketClient'
+{SocketServer} = require '../../src/messages/SocketServer'
+{ChannelMessage, messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
+{Settings} = require '../../src/Settings'
 
 #TODO: Clean up the redundancy here.  One problem is that often the setup is slightly different, and needs to call the done() method.
 

@@ -1,5 +1,5 @@
 assert = require 'assert'
-{ChannelMessage, messageAction, messageMaker} = require '../../messages/ChannelMessage'
+{ChannelMessage, messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
 
 describe 'ChannelMessage', ->
   describe 'confirmationMessage', ->
