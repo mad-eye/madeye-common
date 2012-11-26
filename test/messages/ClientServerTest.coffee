@@ -57,9 +57,6 @@ describe 'SocketServer-integration:', ->
 
   describe 'handshake message', ->
     socket = message = null
-    before ->
-      socket = new BCSocket "http://localhost:#{Settings.bcPort}/channel"
-      socket.onopen = ->
     it 'should confirm handshake and store socket', (done) ->
       makeSocket
         onopen: ->
