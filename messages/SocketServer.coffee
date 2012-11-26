@@ -87,6 +87,8 @@ class SocketServer
 
   send: (socket, message) =>
     console.log "Server sending message #{message.id} to socket #{socket.id}"
+    if message.shouldConfirm
+      console.log "Storing message #{message.id} for confirmation."
     socket.send message, (err) =>
       if err
         console.error "Error delivering message #{message.id}:", err
@@ -94,8 +96,6 @@ class SocketServer
       else
         console.log "Message #{message.id} delivered to client."
         delete @sentMessages[message.id]
-    if message.shouldConfirm
-      console.log "Storing message #{message.id} for confirmation."
       @sentMessages[message.id] = message
 
     

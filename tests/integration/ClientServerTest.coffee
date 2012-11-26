@@ -24,26 +24,37 @@ makeSocket = (hooks) ->
   _.extend(socket, hooks)
   return socket
 
-#XXX: Find way to destroy server after (in-between?) tests.
-describe 'SocketServer-integration:', ->
-  server = client = controller = null
-  projectId = uuid.v4()
+resetServer = (server) ->
+  server.controller = null
+  server.initialize()
+  server.onHandshake = null
+
+describe 'SocketServer:', ->
+  server = null
   before ->
-    controller = { route: (msg, callback) ->
-      console.log "Routing message (has callback: #{callback?}):", msg.id
-      replyMessage = messageMaker.message
-        action: 'test'
-        replyTo: msg.id
-        shouldConfirm: false
-      callback? null, replyMessage
-    }
-    server = new SocketServer controller
+    server = new SocketServer
     server.listen Settings.bcPort
+
   after ->
     server.destroy()
-    server = null
-  describe 'Basic Server', ->
-    it 'should allow a socket to connect', (done) ->
+    
+  #XXX: Find way to destroy server after (in-between?) tests.
+  describe 'socket', ->
+    projectId = uuid.v4()
+    before ->
+      controller = { route: (msg, callback) ->
+        console.log "Routing message (has callback: #{callback?}):", msg.id
+        replyMessage = messageMaker.message
+          action: 'test'
+          replyTo: msg.id
+          shouldConfirm: false
+        callback? null, replyMessage
+      }
+      server.controller = controller
+    after ->
+      resetServer(server)
+
+    it 'should be allowed to connect', (done) ->
       makeSocket
         onopen: ->
           message = messageMaker.message
@@ -56,9 +67,7 @@ describe 'SocketServer-integration:', ->
           assert.ok msg
           done()
 
-  describe 'handshake message', ->
-    socket = message = null
-    it 'should store socket', (done) ->
+    it 'should be stored on handshake', (done) ->
       server.onHandshake = (projId) ->
         assert.equal projId, projectId
         assert.ok @liveSockets[projId]
@@ -71,26 +80,22 @@ describe 'SocketServer-integration:', ->
           @send message
 
 
-describe 'SocketClient-SocketServer', ->
-  server = client = controller = null
-  projectId = uuid.v4()
-  before ->
-    controller = { route: (msg, callback) ->
-      console.log "Routing message (has callback: #{callback?}):", msg.id
-      replyMessage = messageMaker.message
-        action: 'test'
-        replyTo: msg.id
-        shouldConfirm: false
-      callback? null, replyMessage
-    }
-    server = new SocketServer controller
-    server.listen Settings.bcPort
-  after ->
-    server.destroy()
-    server = null
+  describe 'SocketClient', ->
+    projectId = uuid.v4()
+    before ->
+      controller = { route: (msg, callback) ->
+        console.log "Routing message (has callback: #{callback?}):", msg.id
+        replyMessage = messageMaker.message
+          action: 'test'
+          replyTo: msg.id
+          shouldConfirm: false
+        callback? null, replyMessage
+      }
+      server.controller = controller
+    after ->
+      resetServer(server)
 
-  describe 'openConnection', ->
-    it 'should have sent handshake', (done) ->
+    it 'should send handshake on openConnection', (done) ->
       server.onHandshake = (projId) ->
         assert.equal projId, projectId
         assert.ok @liveSockets[projId]
@@ -98,12 +103,9 @@ describe 'SocketClient-SocketServer', ->
       client = new SocketClient()
       client.openConnection projectId
 
-  describe 'sending message from client to server', ->
-    before ->
+    it 'should trigger callback on message', (done) ->
       client = new SocketClient()
       client.openConnection projectId
-      
-    it 'should trigger callback', (done) ->
       message = messageMaker.addFilesMessage [{
         path: 'some/path'
         isDir: false
@@ -116,38 +118,34 @@ describe 'SocketClient-SocketServer', ->
         done()
       
 
-describe 'SocketServer-SocketClient', ->
-  server = client = null
-  projectId = uuid.v4()
-  fileId = uuid.v4()
-  before (done) ->
-    console.log "**Starting SocketServer-SocketClient"
-    controller = { route: (msg, callback) ->
-      console.log "Routing message (has callback: #{callback?}):", msg.id
-      #callback? null, null
-    }
-    server = new SocketServer controller
-    server.listen Settings.bcPort
-    server.onHandshake = (projId) ->
-      console.log "Got handshake for #{projId}"
-      done()
-    client = new SocketClient()
-    client.openConnection projectId
-    client.onMessage = (msg) ->
-      console.log "Calling client.onMessage callback."
-      if msg.action == messageAction.REQUEST_FILE
-        replyMsg = messageMaker.message {
-          action : msg.action
-          replyTo : msg.id
-        }
-        @send replyMsg
+  describe 'sending messages to client', ->
+    projectId = uuid.v4()
+    fileId = uuid.v4()
+    before (done) ->
+      console.log "**Starting SocketServer-SocketClient"
+      controller = { route: (msg, callback) ->
+        #console.log "Routing message (has callback: #{callback?}):", msg.id
+        #callback? null, null
+      }
+      server.controller = controller
+      server.onHandshake = (projId) ->
+        console.log "Got handshake for #{projId}"
+        done()
+      client = new SocketClient()
+      client.onMessage = (msg) ->
+        console.log "Calling client.onMessage callback."
+        if msg.action == messageAction.REQUEST_FILE
+          replyMsg = messageMaker.message {
+            action : msg.action
+            replyTo : msg.id
+          }
+          @send replyMsg
+      client.openConnection projectId
 
-  after ->
-    server.destroy()
-    server = null
-    console.log "**Finished SocketServer-SocketClient"
+    after ->
+      resetServer(server)
+      console.log "**Finished SocketServer-SocketClient"
 
-  describe 'sending message from server to client', ->
     it 'should trigger tell callback fweep', (done) ->
       message = messageMaker.requestFileMessage(fileId)
       server.tell projectId, message, (err, responseMsg) ->
