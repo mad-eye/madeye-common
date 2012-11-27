@@ -1,4 +1,7 @@
 #TODO: Change Host to Hostname
+#Rename madeye_http to madeye_azkaban
+#Addd bolide
+
 Settings = {
   bcHost: process.env["MADEYE_BC_HOST"],
   bcPort: parseInt(process.env["MADEYE_BC_PORT"]),
