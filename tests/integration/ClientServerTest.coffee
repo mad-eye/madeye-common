@@ -136,15 +136,12 @@ describe 'SocketServer:', ->
       server.onHandshake = (projId) ->
         console.log "Got handshake for #{projId}"
         done()
-      client = new SocketClient()
-      client.onMessage = (msg) ->
-        console.log "Calling client.onMessage callback."
+      controller = route: (msg, callback) ->
+        console.log "Calling client.controller callback."
         if msg.action == messageAction.REQUEST_FILE
-          replyMsg = messageMaker.message {
-            action : msg.action
-            replyTo : msg.id
-          }
-          @send replyMsg
+          replyMsg = messageMaker.replyMessage msg
+          callback null, replyMsg
+      client = new SocketClient controller
       client.openConnection projectId, newSocket()
 
     after ->

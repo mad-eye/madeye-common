@@ -4,6 +4,7 @@ uuid = require 'node-uuid'
 {messageAction, messageMaker} = require './ChannelMessage'
 {Settings} = require '../Settings'
 
+#TODO: Extract the shared logic of this and SocketClient into another class.
 class SocketServer
   constructor: (@controller) ->
     #console.log "Constructing with controller", @controller

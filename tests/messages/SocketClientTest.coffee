@@ -4,7 +4,7 @@ uuid = require 'node-uuid'
 {MockSocket} = require '../mock/MockSocket'
 {messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
 
-
+#TODO: Use beforeEach to reduce duplicated code
 describe 'SocketClient', ->
   socket = socketClient = null
   projectId = uuid.v4()
@@ -55,10 +55,12 @@ describe 'SocketClient', ->
       socket = new MockSocket()
       socketClient = new SocketClient()
       socketClient.openConnection projectId, socket
-    it 'triggers onMessage on receive', ->
+    it 'triggers controller on receive', ->
       receivedMsg = null
-      socketClient.onMessage = (msg) ->
-        receivedMsg = msg
+      socketClient.controller = {
+        route : (msg, callback) ->
+          receivedMsg = msg
+      }
       message = messageMaker.requestFileMessage uuid.v4()
       socket.receive message
       assert.equal message, receivedMsg

@@ -3,9 +3,10 @@ uuid = require 'node-uuid'
 {BCSocket} = require 'browserchannel'
 {messageAction, messageMaker} = require './ChannelMessage'
 
+#TODO: Extract the shared logic of this and SocketServer into another class.
 #WARNING: Must call @destroy when done to close the channel.
 class SocketClient
-  constructor: () ->
+  constructor: (@controller) ->
     @sentMessages = {}
     @registeredCallbacks = {}
 
@@ -15,6 +16,14 @@ class SocketClient
 
   handleMessage: (message) ->
     console.log "Client received message #{message.id}"
+    @controller?.route message, (err, replyMessage) =>
+      console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
+      if err
+        console.error "Replying with error: #{err.message}"
+        @send messageMaker.errorMessage err.message
+      else if replyMessage
+        #console.log "Replying with message:", replyMessage
+        @send replyMessage
     #Check for any callbacks waiting for a response.
     if message.replyTo?
       console.log "Checking registered callback to #{message.replyTo}"
@@ -26,8 +35,6 @@ class SocketClient
         callback? null, message
       return
       #TODO: Should this be the end of the message?  Do we ever need to route replies?
-    if @onMessage
-      @onMessage message
 
   openConnection: (@projectId, socket) ->
     console.log "opening connection"

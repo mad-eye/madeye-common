@@ -1,6 +1,7 @@
 uuid = require 'node-uuid'
 _ = require 'underscore'
 
+#FIXME: Need to rename this file.
 
 #Message Actions
 messageAction =
