@@ -1,0 +1,8 @@
+#! /bin/sh
+# A quick utility to pull all the repos under $MADEYE_HOME
+for repo in $MADEYE_HOME/*
+do
+  if [ -d "$repo" ]; then
+    (cd $repo && git pull) &
+  fi
+done
