@@ -12,8 +12,7 @@ describe 'SocketClient', ->
   describe 'openConnection', ->
     before ->
       socket = new MockSocket()
-      socketClient = new SocketClient()
-      socketClient.openConnection projectId, socket
+      socketClient = new SocketClient(socket)
     it 'should set socket.onopen', ->
       assert.ok socket.onopen
     it 'should set socket.onmessage', ->
@@ -26,11 +25,12 @@ describe 'SocketClient', ->
   describe 'destroy', ->
     before ->
       socket = new MockSocket()
-      socketClient = new SocketClient()
-      socketClient.openConnection projectId, socket
+      socketClient = new SocketClient(socket)
       socketClient.destroy()
     it 'should close socket', ->
       assert.equal socket.readyState, MockSocket.CLOSED
+    it 'should set socket to null', ->
+      assert.equal socketClient.socket, null
 
   describe 'send', ->
     message = messageMaker.addFilesMessage()
@@ -39,11 +39,8 @@ describe 'SocketClient', ->
       socket = new MockSocket()
       socket.onsend = (msg) ->
         sentMessages.push msg
-      socketClient = new SocketClient()
-      socketClient.openConnection projectId, socket
+      socketClient = new SocketClient(socket)
       socketClient.send message
-    it 'should set message projectId', ->
-      assert.equal message.projectId, projectId
     it 'should have sent the message', ->
       assert.equal sentMessages.length, 1
       assert.equal sentMessages[0], message
@@ -53,8 +50,7 @@ describe 'SocketClient', ->
   describe 'handleMessage', ->
     before ->
       socket = new MockSocket()
-      socketClient = new SocketClient()
-      socketClient.openConnection projectId, socket
+      socketClient = new SocketClient(socket)
     it 'triggers controller on receive', ->
       receivedMsg = null
       socketClient.controller = {
@@ -64,3 +60,10 @@ describe 'SocketClient', ->
       message = messageMaker.requestFileMessage uuid.v4()
       socket.receive message
       assert.equal message, receivedMsg
+    it 'triggers handleError on error message', (done) ->
+      errorString = "This is an error!"
+      socketClient.handleError = (error) ->
+        assert.equal error, errorString
+        done()
+      socket.receive messageMaker.errorMessage errorString
+

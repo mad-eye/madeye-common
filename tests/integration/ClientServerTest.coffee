@@ -23,6 +23,11 @@ newServer = ->
 newSocket = ->
   new BCSocket "http://localhost:#{port}/channel"
 
+newClient = (projectId, controller) ->
+  client = new SocketClient newSocket(), controller
+  client.projectId = projectId
+  return client
+
 #hooks:
 #  onmessage : (msg) -> ...
 #  onopen : -> ...
@@ -99,17 +104,17 @@ describe 'SocketServer:', ->
     afterEach ->
       server.onHandshake = null
 
-    it 'should send handshake on openConnection', (done) ->
+    it 'should set projectId on handshake ', (done) ->
       server.onHandshake = (projId) ->
         assert.equal projId, projectId
         assert.ok @liveSockets[projId]
         done()
-      client = new SocketClient()
-      client.openConnection projectId, newSocket()
+      client = newClient(projectId)
+      message = messageMaker.handshakeMessage()
+      client.send message
 
     it 'should trigger callback on message', (done) ->
-      client = new SocketClient()
-      client.openConnection projectId, newSocket()
+      client = newClient(projectId)
       message = messageMaker.addFilesMessage [{
         path: 'some/path'
         isDir: false
@@ -141,15 +146,15 @@ describe 'SocketServer:', ->
         if msg.action == messageAction.REQUEST_FILE
           replyMsg = messageMaker.replyMessage msg
           callback null, replyMsg
-      client = new SocketClient controller
-      client.openConnection projectId, newSocket()
+      client = newClient(projectId, controller)
+      client.send messageMaker.handshakeMessage()
 
     after ->
       server.destroy()
     afterEach ->
       server.onHandshake = null
 
-    it 'should trigger tell callback', (done) ->
+    it 'should trigger tell callback fweep', (done) ->
       message = messageMaker.requestFileMessage(fileId)
       server.tell projectId, message, (err, responseMsg) ->
         console.log "Calling server.tell callback."

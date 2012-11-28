@@ -6,16 +6,24 @@ uuid = require 'node-uuid'
 #TODO: Extract the shared logic of this and SocketServer into another class.
 #WARNING: Must call @destroy when done to close the channel.
 class SocketClient
-  constructor: (@controller) ->
+  constructor: (@socket, @controller) ->
     @sentMessages = {}
     @registeredCallbacks = {}
+    @socket ?= SocketClient.defaultSocket()
+    @completeSocket @socket
 
   destroy: ->
-    @socket.close() if @socket?
+    @socket?.close()
     @socket = null
 
   handleMessage: (message) ->
     console.log "Client received message #{message.id}"
+    ## Handle incoming Error Layer
+    if message.error?
+      console.error "Received error message:", message
+      @handleError? message.error
+      return
+    ## Route Layer
     @controller?.route message, (err, replyMessage) =>
       console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
       if err
@@ -24,7 +32,7 @@ class SocketClient
       else if replyMessage
         #console.log "Replying with message:", replyMessage
         @send replyMessage
-    #Check for any callbacks waiting for a response.
+    ## REPLY Layer Check for any callbacks waiting for a response.
     if message.replyTo?
       console.log "Checking registered callback to #{message.replyTo}"
       callback = @registeredCallbacks[message.replyTo]
@@ -36,13 +44,9 @@ class SocketClient
       return
       #TODO: Should this be the end of the message?  Do we ever need to route replies?
 
-  openConnection: (@projectId, socket) ->
-    console.log "opening connection"
-    @socket = socket ? new BCSocket "http://#{Settings.bcHost}:#{Settings.bcPort}/channel", reconnect:true
-    @completeSocket @socket
-      
-
   send: (message, callback) ->
+    unless message? && typeof message == 'object'
+      throw new Error "SocketClient.send trying to send non-object message:", message
     message.projectId = @projectId
     console.log "Client sending message", message
     @socket.send message, (err) ->
@@ -58,8 +62,9 @@ class SocketClient
     @registeredCallbacks[message.id] = callback
 
   completeSocket: (socket) ->
-    @socket.onopen = =>
-      @send messageMaker.handshakeMessage()
+    return unless socket?
+    @socket.onopen = ->
+      console.log "Opened socket."
     @socket.onmessage = (message) =>
       console.log 'Socket (client) received message', message
       @handleMessage message
@@ -68,6 +73,9 @@ class SocketClient
       throw new Error msg
     @socket.onclose = (message) =>
       console.log "closing time:", message
+
+  @defaultSocket: ->
+    socket = new BCSocket "http://#{Settings.bcHost}:#{Settings.bcPort}/channel", reconnect:true
 
   
 exports.SocketClient = SocketClient
