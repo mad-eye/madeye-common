@@ -10,7 +10,9 @@ Settings = {
   mongoHost: process.env["MADEYE_MONGO_HOST"],
   mongoPort: parseInt(process.env["MADEYE_MONGO_PORT"]),
   apogeeHost: process.env["MADEYE_APOGEE_HOST"],
-  apogeePort: parseInt(process.env["MADEYE_APOGEE_PORT"])
+  apogeePort: parseInt(process.env["MADEYE_APOGEE_PORT"]),
+  bolideHost: process.env["MADEYE_BOLIDE_HOST"],
+  bolidePort: process.env["MADEYE_BOLIDE_PORT"]
 }
 
 exports.Settings = Settings
