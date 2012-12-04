@@ -48,7 +48,8 @@ class SocketClient
     unless message? && typeof message == 'object'
       throw new Error "SocketClient.send trying to send non-object message:", message
     message.projectId = @projectId
-    console.log "Client sending message", message
+    #console.log "Client sending message", message
+    @registeredCallbacks[message.id] = callback
     @socket.send message, (err) ->
       if err
         console.error "Error delivering message #{message.id}:", err
@@ -59,20 +60,19 @@ class SocketClient
     if message.shouldConfirm
       #console.log "Storing message #{message.id} for confirmation."
       @sentMessages[message.id] = message
-    @registeredCallbacks[message.id] = callback
 
   completeSocket: (socket) ->
     return unless socket?
     @socket.onopen = ->
       console.log "Opened socket."
     @socket.onmessage = (message) =>
-      console.log 'Socket (client) received message', message
+      #console.log 'Socket (client) received message', message
       @handleMessage message
     @socket.onerror = (errorMsg, errorCode) ->
       console.error "Error on socket:", msg, errCode
       throw new Error msg
     @socket.onclose = (message) =>
-      console.log "closing time:", message
+      console.log "closing socket:", message
 
   @defaultSocket: ->
     socket = new BCSocket "http://#{Settings.bcHost}:#{Settings.bcPort}/channel", reconnect:true
