@@ -11,6 +11,7 @@ class MockSocket
     _.extend(this, callbacks)
     @options = {}
     @headers = {}
+    @callbacks = {}
 
 
   setState: (state) ->
@@ -22,8 +23,9 @@ class MockSocket
   completeConnection: ->
     @setState MockSocket.OPEN
 
-  send: (message) ->
+  send: (message, callback) ->
     @onsend message if @onsend?
+    callback?()
 
   receive: (message) ->
     @onmessage message if @onmessage?

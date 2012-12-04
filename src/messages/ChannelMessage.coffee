@@ -50,7 +50,7 @@ messageMaker =
     @message {
       action : messageAction.REPLY
       replyTo : message.id
-      repliedAction : message.action
+      replyAction : message.action
       data : data
     }
 

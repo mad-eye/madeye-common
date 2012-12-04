@@ -50,13 +50,14 @@ class SocketClient
     message.projectId = @projectId
     #console.log "Client sending message", message
     @registeredCallbacks[message.id] = callback
-    @socket.send message, (err) ->
+    @socket.send message, (err) =>
       if err
         console.error "Error delivering message #{message.id}:", err
+        callback err
         #TODO: Should retry delivery?
       else
-        #console.log "Message #{message.id} delivered to server."
-        delete @sendMessages[message.id]
+        console.log "Message #{message.id} delivered to server."
+        delete @sentMessages[message.id]
     if message.shouldConfirm
       #console.log "Storing message #{message.id} for confirmation."
       @sentMessages[message.id] = message

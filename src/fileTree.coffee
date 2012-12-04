@@ -57,6 +57,7 @@ class File
 trimPath = (path, rootDir) ->
   if rootDir && path.indexOf(rootDir) == 0
     path = path.substring rootDir.length
+    path = path.substring 1 unless rootDir=="" and path.charAt(0)!='/'
   path
 
 stripSlash = (path) ->
