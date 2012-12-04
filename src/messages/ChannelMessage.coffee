@@ -9,7 +9,7 @@ messageAction =
   CONFIRM : 'confirm'
   REPLY : 'reply'
   REQUEST_FILE : 'requestFile'
-  SAVE_FILE : 'saveFile'
+  SAVE_FILES : 'saveFiles'
   ADD_FILES : 'addFiles'
   REMOVE_FILES : 'removeFiles'
 
@@ -18,7 +18,7 @@ messageAction =
 #   error: an error message (eventually a machine-readable handle and a human-readable description)
 #   action: handshake, confirm, heartbeat, #general
 #           addFiles, removeFiles,    #dementor to azkaban
-#           requestFile, saveFile         #azkaban to dementor
+#           requestFile, saveFiles         #azkaban to dementor
 #   projectId: (required for dementor to azkaban)
 #   replyTo: uuid of message replied to
 #   timestamp: milliseconds from epoch (required)
@@ -79,7 +79,12 @@ messageMaker =
         files : files
     }
 
-  
+  saveFilesMessage: (files) ->
+    @message {
+      action : messageAction.SAVE_FILES
+      data :
+        files : files
+    }  
 
 exports.messageAction = messageAction
 exports.messageMaker = messageMaker
