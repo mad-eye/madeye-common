@@ -66,7 +66,7 @@ class SocketServer
 
     #Check for any callbacks waiting for a response.
     if message.replyTo?
-      console.log "Checking registered callback to #{message.replyTo}"
+      #console.log "Checking registered callback to #{message.replyTo}"
       callback = @registeredCallbacks[message.replyTo]
       if callback
         #console.log "Invoking registered callback to #{message.replyTo}", callback

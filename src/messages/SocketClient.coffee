@@ -17,7 +17,7 @@ class SocketClient
     @socket = null
 
   handleMessage: (message) ->
-    console.log "Client received message #{message.id}"
+    #console.log "Client received message #{message.id}"
     ## Handle incoming Error Layer
     if message.error?
       console.error "Received error message:", message
@@ -34,7 +34,7 @@ class SocketClient
         @send replyMessage
     ## REPLY Layer Check for any callbacks waiting for a response.
     if message.replyTo?
-      console.log "Checking registered callback to #{message.replyTo}"
+      #console.log "Checking registered callback to #{message.replyTo}"
       callback = @registeredCallbacks[message.replyTo]
       if message.error
         callback? {error: message.error}
@@ -56,7 +56,7 @@ class SocketClient
         callback err
         #TODO: Should retry delivery?
       else
-        console.log "Message #{message.id} delivered to server."
+        #console.log "Message #{message.id} delivered to server."
         delete @sentMessages[message.id]
     if message.shouldConfirm
       #console.log "Storing message #{message.id} for confirmation."
