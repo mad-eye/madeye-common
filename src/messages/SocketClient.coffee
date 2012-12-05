@@ -27,8 +27,8 @@ class SocketClient
     @controller?.route message, (err, replyMessage) =>
       console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
       if err
-        console.error "Replying with error: #{err.message}"
-        @send messageMaker.errorMessage err.message
+        console.error "Replying with error:", err
+        @send messageMaker.errorMessage err, message.id
       else if replyMessage
         #console.log "Replying with message:", replyMessage
         @send replyMessage

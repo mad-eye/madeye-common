@@ -60,9 +60,12 @@ messageMaker =
       fileId : fileId
     }
 
-  errorMessage: (error) ->
+  errorMessage: (error, replyId) ->
     @message {
+      action : messageAction.REPLY
       error : error
+      shouldConfirm : false
+      replyTo : replyId
     }
 
   addFilesMessage: (files) ->
@@ -84,7 +87,7 @@ messageMaker =
       action : messageAction.SAVE_FILES
       data :
         files : files
-    }  
+    }
 
 exports.messageAction = messageAction
 exports.messageMaker = messageMaker

@@ -51,13 +51,15 @@ class SocketServer
       console.log "Receiving handshake for project #{message.projectId}"
       @attachSocket socket, message.projectId
       @onHandshake? message.projectId
+      replyMessage = messageMaker.replyMessage message
+      @send socket, replyMessage
       return
     else
       @controller?.route message, (err, replyMessage) =>
         console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
         if err
           console.error "Replying with error: #{err.message}"
-          @send socket, messageMaker.errorMessage err.message
+          @send socket, messageMaker.errorMessage err
         else if replyMessage
           #console.log "Replying with message:", replyMessage
           @send socket, replyMessage
