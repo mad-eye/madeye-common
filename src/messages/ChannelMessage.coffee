@@ -9,7 +9,7 @@ messageAction =
   CONFIRM : 'confirm'
   REPLY : 'reply'
   REQUEST_FILE : 'requestFile'
-  SAVE_FILES : 'saveFiles'
+  SAVE_FILE : 'saveFile'
   ADD_FILES : 'addFiles'
   REMOVE_FILES : 'removeFiles'
 
@@ -82,12 +82,14 @@ messageMaker =
         files : files
     }
 
-  saveFilesMessage: (files) ->
+  saveFileMessage: (fileId, contents) ->
     @message {
-      action : messageAction.SAVE_FILES
+      action : messageAction.SAVE_FILE
       data :
-        files : files
+        fileId : fileId
+        contents : contents
     }
+
 
 exports.messageAction = messageAction
 exports.messageMaker = messageMaker
