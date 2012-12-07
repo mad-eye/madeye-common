@@ -17,7 +17,6 @@ class SocketClient
     @socket = null
 
   handleMessage: (message) ->
-    #console.log "Client received message #{message.id}"
     ## Handle incoming Error Layer
     if message.error?
       console.error "Received error message:", message
@@ -25,7 +24,7 @@ class SocketClient
       return
     ## Route Layer
     @controller?.route message, (err, replyMessage) =>
-      console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
+      #console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
       if err
         console.error "Replying with error:", err
         @send messageMaker.errorMessage err, message.id
@@ -33,7 +32,6 @@ class SocketClient
         @send replyMessage
     ## REPLY Layer Check for any callbacks waiting for a response.
     if message.replyTo?
-      #console.log "Checking registered callback to #{message.replyTo}"
       callback = @registeredCallbacks[message.replyTo]
       if message.error
         callback? {error: message.error}
@@ -50,7 +48,6 @@ class SocketClient
     #console.log "SocketClient sending message", message
     @registeredCallbacks[message.id] = callback
     if message.shouldConfirm
-      #console.log "Storing message #{message.id} for confirmation."
       @sentMessages[message.id] = message
     @socket.send message, (err) =>
       if err
@@ -64,15 +61,12 @@ class SocketClient
   completeSocket: (socket) ->
     return unless socket?
     @socket.onopen = ->
-      console.log "Opened socket."
     @socket.onmessage = (message) =>
-      #console.log 'Socket (client) received message', message
       @handleMessage message
     @socket.onerror = (errorMsg, errorCode) ->
       console.error "Error on socket:", msg, errCode
       throw new Error msg
     @socket.onclose = (message) =>
-      console.log "closing socket:", message
 
   @defaultSocket: ->
     socket = new BCSocket "http://#{Settings.bcHost}:#{Settings.bcPort}/channel", reconnect:true
