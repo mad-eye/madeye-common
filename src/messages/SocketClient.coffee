@@ -30,7 +30,6 @@ class SocketClient
         console.error "Replying with error:", err
         @send messageMaker.errorMessage err, message.id
       else if replyMessage
-        #console.log "Replying with message:", replyMessage
         @send replyMessage
     ## REPLY Layer Check for any callbacks waiting for a response.
     if message.replyTo?
@@ -48,8 +47,11 @@ class SocketClient
     unless message? && typeof message == 'object'
       throw new Error "SocketClient.send trying to send non-object message:", message
     message.projectId = @projectId
-    #console.log "Client sending message", message
+    #console.log "SocketClient sending message", message
     @registeredCallbacks[message.id] = callback
+    if message.shouldConfirm
+      #console.log "Storing message #{message.id} for confirmation."
+      @sentMessages[message.id] = message
     @socket.send message, (err) =>
       if err
         console.error "Error delivering message #{message.id}:", err
@@ -58,9 +60,6 @@ class SocketClient
       else
         #console.log "Message #{message.id} delivered to server."
         delete @sentMessages[message.id]
-    if message.shouldConfirm
-      #console.log "Storing message #{message.id} for confirmation."
-      @sentMessages[message.id] = message
 
   completeSocket: (socket) ->
     return unless socket?

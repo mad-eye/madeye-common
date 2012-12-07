@@ -154,7 +154,7 @@ describe 'SocketServer:', ->
     afterEach ->
       server.onHandshake = null
 
-    it 'should trigger tell callback fweep', (done) ->
+    it 'should trigger tell callback', (done) ->
       message = messageMaker.requestFileMessage(fileId)
       server.tell projectId, message, (err, responseMsg) ->
         console.log "Calling server.tell callback."

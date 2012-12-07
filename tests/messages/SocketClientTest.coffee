@@ -44,8 +44,6 @@ describe 'SocketClient', ->
     it 'should have sent the message', ->
       assert.equal sentMessages.length, 1
       assert.equal sentMessages[0], message
-    it 'should have saved the message', ->
-      assert.equal socketClient.sentMessages[message.id], message
 
   describe 'handleMessage', ->
     before ->
