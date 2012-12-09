@@ -8,9 +8,10 @@ Package.on_use(function (api, where) {
 //where = where || ["client", "server"];
 //but absent in atmosphere packages 
 
-  api.use("underscore", "client");
+  api.use("coffeescript", ["client", "server"]);
+  api.use("underscore", ["client", "server"]);
   api.add_files(["preMeteor.js"], ["client", "server"]);
-  api.add_files(["dist/fileTree.js"], "client");
-  api.add_files(["dist/Settings.js"], "server");
+  api.add_files(["src/fileTree.coffee"], ["client", "server"])
+  api.add_files(["src/Settings.coffee"], "server");
   api.add_files(["postMeteor.js"], ["client", "server"]);
 });
