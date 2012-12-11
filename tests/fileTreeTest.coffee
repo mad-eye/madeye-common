@@ -1,6 +1,8 @@
 FileTree = require("../src/fileTree").FileTree
 File = require("../src/fileTree").File
 assert = require "assert"
+_path = require "path"
+uuid = require "node-uuid"
 
 describe "File", ->
   IN_ORDER = -1
@@ -37,6 +39,34 @@ describe "File", ->
       config = new File {path: "/config archive"}
       assert.equal IN_ORDER, File.compare(stuff, config)
 
+  describe "parentPath", ->
+    fileMap = fileTree = null
+    before ->
+      fileMap =
+        file1 : 'this is file1'
+        dir1 :
+          file2 : 'this is file2'
+          dir2:
+            file3 : 'this is file3'
+        dir3 : {}
+      fileTree = constructFileTree fileMap
+    it "should give null for top level files and dirs", ->
+      file1 = fileTree.findByPath 'file1'
+      console.log "Found file1:", file1
+      dir1 = fileTree.findByPath 'dir1'
+      dir3 = fileTree.findByPath 'dir3'
+      assert.equal file1.parentPath, null
+      assert.equal dir1.parentPath, null
+      assert.equal dir3.parentPath, null
+    it "should give dir1 for first-level nesting", ->
+      file2 = fileTree.findByPath 'dir1/file2'
+      dir2 = fileTree.findByPath 'dir1/dir2'
+      assert.equal file2.parentPath, 'dir1'
+      assert.equal dir2.parentPath, 'dir1'
+    it "should give dir1/dir2 for second-level nesting", ->
+      file3 = fileTree.findByPath 'dir1/dir2/file3'
+      assert.equal file3.parentPath, 'dir1/dir2'
+
 describe "FileTree", ->
   describe "sort", ->
     it "sorts", ->
@@ -49,3 +79,25 @@ describe "FileTree", ->
     it "can find by path", ->
       tree = new FileTree [{path: "/readme"}, {path: "/azkaban"}, {path: "/Hogwarts"}]
       assert.deepEqual tree.findByPath("/readme"), new File({path: "/readme"})
+
+
+#TODO: This is duplicate of dementor/test/util/fileUtils.  Move that to common.
+constructFileTree = (fileMap, root, fileTree) ->
+  fileTree ?= new FileTree(null, root)
+  makeRawFile = (path, value) ->
+    console.log "Making raw file with path #{path} and value #{value}"
+    rawFile = {
+      _id : uuid.v4()
+      path : path
+      isDir : (typeof value != "string")
+    }
+    console.log "Made rawfile:", rawFile
+    return rawFile
+  for key, value of fileMap
+    fileTree.addFile makeRawFile _path.join(root, key), value
+    unless typeof value == "string"
+      constructFileTree(value, _path.join(root, key), fileTree)
+  console.log "Contructed fileTree:", fileTree unless root?
+  return fileTree
+
+

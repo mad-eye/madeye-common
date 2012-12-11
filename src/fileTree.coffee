@@ -47,6 +47,13 @@ class File
   @.prototype.__defineGetter__ "depth", ->
     stripSlash(@path).split("/").length - 1 #don't count directory itself or leading /
 
+  @.prototype.__defineGetter__ "parentPath", ->
+    rightSlash = @path.lastIndexOf('/')
+    if rightSlash > 0
+      return @path.substring 0, rightSlash
+    else
+      return null
+
   [F1_FIRST, F2_FIRST] = [-1,1]
   @compare: (f1, f2) ->
     #we want / to come before everything so a folder's contents come before anything else
