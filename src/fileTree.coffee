@@ -45,7 +45,7 @@ class File
     stripSlash(@path).split("/").pop()
 
   @.prototype.__defineGetter__ "depth", ->
-    stripSlash(@path).split("/").length - 2 #don't count directory itself or leading /
+    stripSlash(@path).split("/").length - 1 #don't count directory itself or leading /
 
   [F1_FIRST, F2_FIRST] = [-1,1]
   @compare: (f1, f2) ->
