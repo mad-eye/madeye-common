@@ -1,11 +1,13 @@
 class FileTree
   #TODO take a root arg as well so we can show relative paths
   constructor: (rawFiles=[], @rootDir="")->
-    @files = []
     @setFiles rawFiles
 
-  #TODO: Rename this addFiles
   setFiles: (rawFiles)-> #straight outta mongo, pull files out sorted..?
+    @files = []
+    @addFiles rawFiles
+
+  addFiles: (rawFiles)-> #straight outta mongo, pull files out sorted..?
     rawFiles.forEach (rawFile) =>
       @addFile rawFile, false #don't sort
     @sort()
