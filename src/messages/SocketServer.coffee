@@ -66,14 +66,14 @@ class SocketServer
 
     #Check for any callbacks waiting for a response.
     if message.replyTo?
-      #console.log "Checking registered callback to #{message.replyTo}"
       callback = @registeredCallbacks[message.replyTo]
       if callback
         #console.log "Invoking registered callback to #{message.replyTo}", callback
         if message.error
-          callback {error: message.error}
+          callback message.error
         else
           callback null, message
+        delete @registeredCallbacks[message.replyTo]
       return
       #TODO: Should this be the end of the message?  Do we ever need to route replies?
 
@@ -105,7 +105,7 @@ class SocketServer
     console.log "Sending message to #{projectId}:", message
     socket = @liveSockets[projectId]
     unless socket
-      callback?({error: 'The project has been closed.'})
+      callback?(errors.new 'CONNECTION_CLOSED')
       return
     @send socket, message
     @registeredCallbacks[message.id] = callback
