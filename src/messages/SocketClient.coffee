@@ -38,6 +38,7 @@ class SocketClient
       else
         #console.log "Invoking registered callback to #{message.replyTo}", callback
         callback? null, message
+      delete @registeredCallbacks[message.replyTo]
       return
       #TODO: Should this be the end of the message?  Do we ever need to route replies?
 
