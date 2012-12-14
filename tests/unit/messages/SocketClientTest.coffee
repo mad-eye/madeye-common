@@ -1,8 +1,8 @@
 assert = require 'assert'
 uuid = require 'node-uuid'
-{SocketClient} = require '../../src/messages/SocketClient'
-{MockSocket} = require '../mock/MockSocket'
-{messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
+{SocketClient} = require '../../../src/messages/SocketClient'
+{MockSocket} = require '../../mock/MockSocket'
+{messageAction, messageMaker} = require '../../../src/messages/ChannelMessage'
 
 #TODO: Use beforeEach to reduce duplicated code
 describe 'SocketClient', ->

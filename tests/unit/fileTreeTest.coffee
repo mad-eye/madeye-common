@@ -1,5 +1,5 @@
-FileTree = require("../src/fileTree").FileTree
-File = require("../src/fileTree").File
+FileTree = require("../../src/fileTree").FileTree
+File = require("../../src/fileTree").File
 assert = require "assert"
 _path = require "path"
 uuid = require "node-uuid"

@@ -1,9 +1,9 @@
 assert = require 'assert'
 uuid = require 'node-uuid'
-{SocketServer} = require '../../src/messages/SocketServer'
-{messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
-{MockSocket} = require '../mock/MockSocket'
-{errors, errorType} = require '../../src/errors'
+{SocketServer} = require '../../../src/messages/SocketServer'
+{messageAction, messageMaker} = require '../../../src/messages/ChannelMessage'
+{MockSocket} = require '../../mock/MockSocket'
+{errors, errorType} = require '../../../src/errors'
 
 describe 'SocketServer', ->
   projectId = null
