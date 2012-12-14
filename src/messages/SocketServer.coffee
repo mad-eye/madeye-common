@@ -1,7 +1,7 @@
 browserChannel = require('browserchannel').server
 connect = require('connect')
 uuid = require 'node-uuid'
-{messageAction, messageMaker} = require './ChannelMessage'
+{messageAction, messageMaker} = require './messages'
 {Settings} = require '../Settings'
 {errors} = require '../errors'
 

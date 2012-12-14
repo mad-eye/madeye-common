@@ -6,7 +6,7 @@ browserChannel = require('browserchannel').server
 {BCSocket} = require 'browserchannel'
 {SocketClient} = require '../../src/messages/SocketClient'
 {SocketServer} = require '../../src/messages/SocketServer'
-{messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
+{messageAction, messageMaker} = require '../../src/messages/messages'
 {Settings} = require '../../src/Settings'
 
 #TODO: Clean up the redundancy here.  One problem is that often the setup is slightly different, and needs to call the done() method.

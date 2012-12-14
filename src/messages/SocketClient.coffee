@@ -1,7 +1,7 @@
 uuid = require 'node-uuid'
 {Settings} = require '../Settings'
 {BCSocket} = require 'browserchannel'
-{messageAction, messageMaker} = require './ChannelMessage'
+{messageAction, messageMaker} = require './messages'
 
 #TODO: Extract the shared logic of this and SocketServer into another class.
 #WARNING: Must call @destroy when done to close the channel.
