@@ -9,4 +9,5 @@ The directory structure is as follows:
     ./test/mock         #Directory for Mock objects
     ./test/unit         #Unit tests.  Directory structure should mirror src/ .
     ./test/integration  #Tests integrating multiple classes
+    ./dist/             #Compiled js files from `jake compile`.
     
