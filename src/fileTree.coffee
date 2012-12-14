@@ -1,3 +1,5 @@
+_ = require("underscore") unless _?
+
 class FileTree
   #TODO take a root arg as well so we can show relative paths
   constructor: (rawFiles=[], @rootDir="")->
@@ -33,8 +35,8 @@ class FileTree
 
 class File
   constructor: (rawFile, rootDir="")-> #straight outta mongo
-    @_id = rawFile._id
-    @isDir = rawFile.isDir
+    _.extend @, rawFile
+
     @path = trimPath rawFile.path, rootDir
 
   #TODO see if its easy to make this syntax nicer
