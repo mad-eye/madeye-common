@@ -3,13 +3,15 @@ uuid = require 'node-uuid'
 {SocketServer} = require '../../src/messages/SocketServer'
 {messageAction, messageMaker} = require '../../src/messages/ChannelMessage'
 {MockSocket} = require '../mock/MockSocket'
+{errors, errorType} = require '../../src/errors'
 
 describe 'SocketServer', ->
-  projectId = uuid.v4()
+  projectId = null
   socketServer = socket = null
 
   describe 'attachSocket', ->
     before ->
+      projectId = uuid.v4()
       socketServer = new SocketServer()
       socket = new MockSocket()
       socketServer.attachSocket socket, projectId
@@ -21,6 +23,7 @@ describe 'SocketServer', ->
 
   describe 'connect', ->
     before (done) ->
+      projectId = uuid.v4()
       handshakeMessage = messageMaker.handshakeMessage()
       handshakeMessage.projectId = projectId
 
@@ -43,3 +46,22 @@ describe 'SocketServer', ->
       socketServer.tell projectId, message
       assert.equal sentMessages.length, 1
       assert.equal sentMessages[0], message
+
+  describe 'tell', ->
+    before ->
+      projectId = uuid.v4()
+      socketServer = new SocketServer()
+      socket = new MockSocket()
+      socketServer.attachSocket socket, projectId
+    it 'should give appropriate error when socket is missing', (done) ->
+      newProjId = uuid.v4()
+      message = messageMaker.requestFileMessage uuid.v4()
+      socketServer.tell newProjId, message, (err, replyMsg) ->
+        assert.equal replyMsg, null, "Should not return a replyMsg"
+        assert.ok err, "Should return an error."
+        assert.equal err.type, errorType.CONNECTION_CLOSED, "Error should be CONNECTION_CLOSED"
+        done()
+
+
+
+

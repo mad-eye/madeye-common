@@ -3,6 +3,7 @@ connect = require('connect')
 uuid = require 'node-uuid'
 {messageAction, messageMaker} = require './ChannelMessage'
 {Settings} = require '../Settings'
+{errors} = require '../errors'
 
 #TODO: Extract the shared logic of this and SocketClient into another class.
 class SocketServer
