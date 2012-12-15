@@ -9,5 +9,7 @@ exports.FileTree = require('./src/fileTree').FileTree
 exports.File = require('./src/fileTree').File
 exports.MockSocket = require('./tests/mock/MockSocket').MockSocket
 
+//Errors
 exports.errors = require('./src/errors').errors
 exports.errorType = require('./src/errors').errorType
+
