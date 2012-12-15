@@ -4,7 +4,6 @@ exports.SocketServer = require('./src/messages/SocketServer').SocketServer
 exports.SocketClient = require('./src/messages/SocketClient').SocketClient
 exports.messageMaker = require('./src/messages/messages').messageMaker
 exports.messageAction = require('./src/messages/messages').messageAction
-exports.MockSocket = require('./tests/mock/MockSocket').MockSocket
 exports.FileTree = require('./src/fileTree').FileTree
 exports.File = require('./src/fileTree').File
 exports.MockSocket = require('./tests/mock/MockSocket').MockSocket
