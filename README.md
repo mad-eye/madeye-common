@@ -11,4 +11,3 @@ The directory structure is as follows:
     ./test/integration  #Tests integrating multiple classes
     ./dist/             #Compiled js files from `jake compile`.
     
-MadEye...
