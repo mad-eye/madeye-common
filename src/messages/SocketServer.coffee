@@ -31,7 +31,7 @@ class SocketServer
     ).listen(bcPort)
     console.log 'SocketServer listening on localhost:' + bcPort
 
-  connect: (@socket) ->
+  connect: (socket) ->
     console.log "New socket: #{socket.id} from #{socket.address}"
 
     socket.on 'message', (message) =>
@@ -48,6 +48,7 @@ class SocketServer
       console.log "Socket #{socket.id} disconnected (#{reason})"
 
   handleMessage: (message, socket) ->
+    #console.log "Server received message", message
     if message.action == messageAction.HANDSHAKE
       console.log "Receiving handshake for project #{message.projectId}"
       @attachSocket socket, message.projectId
@@ -55,18 +56,9 @@ class SocketServer
       replyMessage = messageMaker.replyMessage message
       @send socket, replyMessage
       return
-    else
-      @controller?.route message, (err, replyMessage) =>
-        console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
-        if err
-          console.error "Replying with error: #{err.message}"
-          @send socket, messageMaker.errorMessage err, message.id
-        else if replyMessage
-          #console.log "Replying with message:", replyMessage
-          @send socket, replyMessage
 
     #Check for any callbacks waiting for a response.
-    if message.replyTo?
+    else if message.replyTo?
       callback = @registeredCallbacks[message.replyTo]
       if callback
         #console.log "Invoking registered callback to #{message.replyTo}", callback
@@ -77,6 +69,16 @@ class SocketServer
         delete @registeredCallbacks[message.replyTo]
       return
       #TODO: Should this be the end of the message?  Do we ever need to route replies?
+
+    else
+      @controller?.route message, (err, replyMessage) =>
+        console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
+        if err
+          console.error "Replying with error: #{err.message}"
+          @send socket, messageMaker.errorMessage err, message.id
+        else if replyMessage
+          #console.log "Replying with message:", replyMessage
+          @send socket, replyMessage
 
   attachSocket: (socket, projectId) ->
     @projectIdMap[socket.id] = projectId
@@ -91,6 +93,7 @@ class SocketServer
     console.log "Server sending message #{message.id} to socket #{socket.id}"
     if message.shouldConfirm
       console.log "Storing message #{message.id} for confirmation."
+    @sentMessages[message.id] = message
     socket.send message, (err) =>
       if err
         console.error "Error delivering message #{message.id}:", err
@@ -98,7 +101,6 @@ class SocketServer
       else
         console.log "Message #{message.id} delivered to client."
         delete @sentMessages[message.id]
-      @sentMessages[message.id] = message
 
 
   #callback = (err, data) ->,
@@ -108,8 +110,8 @@ class SocketServer
     unless socket
       callback?(errors.new 'CONNECTION_CLOSED')
       return
-    @send socket, message
     @registeredCallbacks[message.id] = callback
+    @send socket, message
 
 
 exports.SocketServer = SocketServer

@@ -36,8 +36,11 @@ messageMaker =
     }, options
 
   #Message constructors
-  handshakeMessage: ->
-    @message action: messageAction.HANDSHAKE
+  handshakeMessage: (projectId) ->
+    @message {
+      action: messageAction.HANDSHAKE
+      projectId: projectId
+    }
 
   confirmationMessage: (message) ->
     @message {
