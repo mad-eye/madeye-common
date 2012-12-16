@@ -68,7 +68,7 @@ class SocketServer
           callback null, message
         delete @registeredCallbacks[message.replyTo]
       return
-      #TODO: Should this be the end of the message?  Do we ever need to route replies?
+      #XXX: Should this be the end of the message?  Do we ever need to route replies?
 
     else
       @controller?.route message, (err, replyMessage) =>
@@ -96,8 +96,9 @@ class SocketServer
     @sentMessages[message.id] = message
     socket.send message, (err) =>
       if err
+        #TODO: Wrap error in our type of error.
         console.error "Error delivering message #{message.id}:", err
-        #TODO: Should retry delivery?
+        #XXX: Should retry delivery?
       else
         console.log "Message #{message.id} delivered to client."
         delete @sentMessages[message.id]

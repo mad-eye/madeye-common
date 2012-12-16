@@ -28,7 +28,7 @@ class SocketClient
         callback? null, message
       delete @registeredCallbacks[message.replyTo]
       return
-      #TODO: Should this be the end of the message?  Do we ever need to route replies?
+      #XXX: Should this be the end of the message?  Do we ever need to route replies?
     @controller?.route message, (err, replyMessage) =>
       #console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
       if err
@@ -60,7 +60,7 @@ class SocketClient
         console.error "Error delivering message #{message.id}:", err
         #TODO: Wrap error in our type of error?
         callback err
-        #TODO: Should retry delivery?
+        #XXX: Should retry delivery?
       else
         #console.log "Message #{message.id} delivered to server."
         delete @sentMessages[message.id]
