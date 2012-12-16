@@ -2,6 +2,7 @@ uuid = require 'node-uuid'
 {Settings} = require '../Settings'
 {BCSocket} = require 'browserchannel'
 {messageAction, messageMaker} = require './messages'
+{errors, errorType} = require '../errors'
 
 #TODO: Extract the shared logic of this and SocketServer into another class.
 #WARNING: Must call @destroy when done to close the channel.
@@ -17,12 +18,17 @@ class SocketClient
     @socket = null
 
   handleMessage: (message) ->
-    ## Handle incoming Error Layer
-    if message.error?
-      console.error "Received error message:", message
-      @handleError? message.error
+    ## REPLY Layer Check for any callbacks waiting for a response.
+    if message.replyTo?
+      callback = @registeredCallbacks[message.replyTo]
+      if message.error
+        callback? message.error
+      else
+        #console.log "Invoking registered callback to #{message.replyTo}", callback
+        callback? null, message
+      delete @registeredCallbacks[message.replyTo]
       return
-    ## Route Layer
+      #TODO: Should this be the end of the message?  Do we ever need to route replies?
     @controller?.route message, (err, replyMessage) =>
       #console.warn "Callback invoked without error or replyMessage" unless err? or replyMessage?
       if err
@@ -30,21 +36,20 @@ class SocketClient
         @send messageMaker.errorMessage err, message.id
       else if replyMessage
         @send replyMessage
-    ## REPLY Layer Check for any callbacks waiting for a response.
-    if message.replyTo?
-      callback = @registeredCallbacks[message.replyTo]
-      if message.error
-        callback? {error: message.error}
-      else
-        #console.log "Invoking registered callback to #{message.replyTo}", callback
-        callback? null, message
-      delete @registeredCallbacks[message.replyTo]
-      return
-      #TODO: Should this be the end of the message?  Do we ever need to route replies?
 
   send: (message, callback) ->
-    unless message? && typeof message == 'object'
-      throw new Error "SocketClient.send trying to send non-object message:", message
+    unless message?
+      console.warn "SocketClient.send trying to send non-object message:", message
+      callback? errors.new errorType.MISSING_PARAM
+      return
+    unless typeof message == 'object'
+      console.warn "SocketClient.send trying to send non-object message:", message
+      callback? errors.new errorType.INVALID_PARAM
+      return
+    unless @projectId
+      console.warn "SocketClient.send trying to send without a projectId"
+      callback? errors.new errorType.MISSING_PARAM
+      return
     message.projectId = @projectId
     #console.log "SocketClient sending message", message
     @registeredCallbacks[message.id] = callback
@@ -53,6 +58,7 @@ class SocketClient
     @socket.send message, (err) =>
       if err
         console.error "Error delivering message #{message.id}:", err
+        #TODO: Wrap error in our type of error?
         callback err
         #TODO: Should retry delivery?
       else

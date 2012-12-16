@@ -67,14 +67,16 @@ describe 'SocketServer', ->
         assert.ok err, "Should return an error."
         assert.equal err.type, errorType.CONNECTION_CLOSED, "Error should be CONNECTION_CLOSED"
         done()
+
     it 'should callback error if socket responds with an error', (done) ->
+      error = errors.new errorType.MISSING_PARAM
       socket.onsend = (msg) ->
-        error = errors.new errorType.MISSING_PARAM
-        errorMsg = messageMaker.errorMessage error, message.id
+        errorMsg = messageMaker.errorMessage error, msg.id
         @receive errorMsg
       socketServer.tell projectId, message, (err, replyMsg) ->
         assert.equal replyMsg, null, "Should not return a replyMsg"
         assert.ok err, "Should return an error."
+        assert.equal err, error
         done()
         
     it 'should callback the replyMessage if socket responds', (done) ->

@@ -4,6 +4,7 @@
 #
 errorType =
   MISSING_PARAM : 'MISSING_PARAM'
+  INVALID_PARAM : 'INVALID_PARAM'
   NO_FILE : 'NO_FILE'
   IS_DIR : 'IS_DIR'
   # Network issues
@@ -12,6 +13,7 @@ errorType =
 
 errorMessage =
   MISSING_PARAM : 'Required parameter is missing.'
+  INVALID_PARAM : 'Parameter is invalid.'
   NO_FILE : 'File not found'
   IS_DIR : 'Illegal operation on a directory.'
   # Network issues
