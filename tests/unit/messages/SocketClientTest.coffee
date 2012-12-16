@@ -97,23 +97,90 @@ describe 'SocketClient', ->
         assert.equal err.type, errorType.MISSING_PARAM
         done()
 
-
-
-  describe 'handleMessage', ->
+  describe 'receive message', ->
+    message = null
     before ->
+      message = messageMaker.addFilesMessage []
       socket = new MockSocket()
       socketClient = new SocketClient(socket)
-    it 'triggers controller on receive', ->
-      receivedMsg = null
+    it 'triggers controller on receive', (done) ->
       socketClient.controller = {
         route : (msg, callback) ->
-          receivedMsg = msg
+          assert.equal msg, message
+          done()
       }
-      message = messageMaker.requestFileMessage uuid.v4()
       socket.receive message
-      assert.equal message, receivedMsg
-    it 'should clear callbacks when a reply message is received'
-    it 'should send an error if controller returns an error'
-    it 'should send the reply message if controller returns a reply message'
+    it 'should clear callbacks when a reply message is received', ->
+      replyMessage = messageMaker.replyMessage message
+      socketClient.registeredCallbacks[message.id] = (err, replyMsg) ->
+      socket.receive replyMessage
+      assert.equal null, socketClient.registeredCallbacks[message.id]
 
+  describe 'handleMessage', ->
+    message = null
+    before ->
+      projectId = uuid.v4()
+      socket = new MockSocket()
+      socketClient = new SocketClient(socket)
+      socketClient.projectId = projectId
+      message = messageMaker.addFilesMessage []
+
+    it 'should trigger callbacks on a reply message', (done) ->
+      reply = messageMaker.replyMessage message
+      socketClient.registeredCallbacks[message.id] = (err, replyMsg) ->
+        assert.equal err, null
+        assert.ok replyMsg
+        assert.equal replyMsg, reply
+        done()
+      socketClient.handleMessage reply, socket
+
+    it 'should trigger callbacks on an error message', (done) ->
+      error = errors.new errorType.MISSING_PARAM
+      errorMsg = messageMaker.errorMessage error, message.id
+      socketClient.registeredCallbacks[message.id] = (err, replyMsg) ->
+        assert.equal replyMsg, null
+        assert.ok err
+        assert.equal err, error
+        done()
+      socketClient.handleMessage errorMsg, socket
+    
+    it 'should direct other requests to the controller', (done) ->
+      message = messageMaker.addFilesMessage []
+      controller =
+        route: (msg, callback) ->
+          assert.ok msg
+          assert.equal msg, message
+          done()
+      socketClient.controller = controller
+      socketClient.handleMessage message, socket
+
+    it 'should send an error message if controller replies with an error', (done) ->
+      message = messageMaker.addFilesMessage []
+      error = errors.new errorType.MISSING_PARAM
+      controller =
+        route: (msg, callback) ->
+          callback error
+      socketClient.controller = controller
+      socket.onsend = (msg) ->
+        console.log "Socket found outgoing message #{msg.id}"
+        assert.ok msg
+        assert.equal msg.error, error
+        assert.equal msg.replyTo, message.id
+        done()
+      socketClient.handleMessage message, socket
+
+    it 'should send a reply message if controller replies with a message', (done) ->
+      message = messageMaker.addFilesMessage []
+      reply = messageMaker.replyMessage message
+      controller =
+        route: (msg, callback) ->
+          callback null, reply
+      socketClient.controller = controller
+      socket.onsend = (msg) ->
+        console.log "Socket found outgoing message #{msg.id}"
+        assert.ok msg
+        assert.equal msg, reply
+        done()
+      socketClient.handleMessage message, socket
+      
 
