@@ -35,7 +35,7 @@ class SocketServer
     console.log "New socket: #{socket.id} from #{socket.address}"
 
     socket.on 'message', (message) =>
-      console.log "Socket #{socket.id} sent message #{message.id}"
+      #console.log "Socket #{socket.id} sent message #{message.id}"
       console.error "Missing controller!" unless @controller
       @handleMessage message, socket
 
@@ -50,7 +50,7 @@ class SocketServer
   handleMessage: (message, socket) ->
     #console.log "Server received message", message
     if message.action == messageAction.HANDSHAKE
-      console.log "Receiving handshake for project #{message.projectId}"
+      #console.log "Receiving handshake for project #{message.projectId}"
       @attachSocket socket, message.projectId
       @onHandshake? message.projectId
       replyMessage = messageMaker.replyMessage message
@@ -90,23 +90,21 @@ class SocketServer
     delete @projectIdMap[socket.id]
 
   send: (socket, message) =>
-    console.log "Server sending message #{message.id} to socket #{socket.id}"
     if message.shouldConfirm
-      console.log "Storing message #{message.id} for confirmation."
-    @sentMessages[message.id] = message
+      @sentMessages[message.id] = message
     socket.send message, (err) =>
       if err
         #TODO: Wrap error in our type of error.
         console.error "Error delivering message #{message.id}:", err
         #XXX: Should retry delivery?
       else
-        console.log "Message #{message.id} delivered to client."
+        #console.log "Message #{message.id} delivered to client."
         delete @sentMessages[message.id]
 
 
   #callback = (err, data) ->,
   tell: (projectId, message, callback) ->
-    console.log "Sending message to #{projectId}:", message
+    #console.log "Sending message to #{projectId}:", message
     socket = @liveSockets[projectId]
     unless socket
       callback?(errors.new 'CONNECTION_CLOSED')
