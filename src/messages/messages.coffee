@@ -13,6 +13,7 @@ messageAction =
   SAVE_FILE : 'saveFile'
   ADD_FILES : 'addFiles'
   REMOVE_FILES : 'removeFiles'
+  CLOSE_CONNECTION : 'closeConnection'
 
 # Messages are of the form:
 #   id: uuid (required)
@@ -36,7 +37,8 @@ messageMaker =
       data : {}
     }, options
 
-  #Message constructors
+  ##Message constructors
+  #Client/Server messages
   heartbeatMessage: () ->
     @message {
       action: messageAction.HEARTBEAT
@@ -48,12 +50,16 @@ messageMaker =
       action: messageAction.HANDSHAKE
       projectId: projectId
     }
-
   confirmationMessage: (message) ->
     @message {
       action : messageAction.CONFIRM
       receivedId : message.id
       shouldConfirm : false
+    }
+
+  closeMessage: ->
+    @message {
+      action: messageAction.CLOSE_CONNECTION
     }
 
   replyMessage: (message, data) ->
@@ -65,18 +71,19 @@ messageMaker =
       data : data
     }
 
-  requestFileMessage : (fileId) ->
-    @message {
-      action : messageAction.REQUEST_FILE
-      fileId : fileId
-    }
-
+  #Operational messages
   errorMessage: (error, replyId) ->
     @message {
       action : messageAction.REPLY
       error : error
       shouldConfirm : false
       replyTo : replyId
+    }
+
+  requestFileMessage : (fileId) ->
+    @message {
+      action : messageAction.REQUEST_FILE
+      fileId : fileId
     }
 
   addFilesMessage: (files) ->

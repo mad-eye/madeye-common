@@ -1,4 +1,5 @@
 uuid = require 'node-uuid'
+flow = require 'flow'
 {Settings} = require '../Settings'
 {BCSocket} = require 'browserchannel'
 {messageAction, messageMaker} = require './messages'
@@ -15,9 +16,13 @@ class SocketClient
 
   destroy: (callback) ->
     @stopHeartbeat()
-    @socket?.close()
-    @socket = null
-    callback?() #This is in preparation for the future.
+    self = this
+    flow.exec ->
+      self.send messageMaker.closeMessage(), this
+    , ->
+      self.socket?.close()
+      self.socket = null
+      callback?()
 
   handleMessage: (message) ->
     #console.log "Client received message", message.id
