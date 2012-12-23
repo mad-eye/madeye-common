@@ -40,7 +40,7 @@ makeSocket = (hooks) ->
   return socket
 
 
-describe 'SocketServer:', ->
+describe 'SocketServerClient:', ->
     
   #XXX: Find way to destroy server after (in-between?) tests.
   describe 'socket', ->
@@ -163,3 +163,29 @@ describe 'SocketServer:', ->
         assert.equal responseMsg.replyTo, message.id
         done()
 
+  describe 'reconnecting after close', ->
+    projectId = uuid.v4()
+    server = null
+    before (done) ->
+      server = newServer()
+      controller = { route: (msg, callback) ->
+        #console.log "Routing message (has callback: #{callback?}):", msg.id
+        #callback? null, null
+      }
+      server.controller = controller
+      server.onHandshake = (projId) ->
+        console.log "Got handshake for #{projId}"
+        done()
+      controller = route: (msg, callback) ->
+        console.log "Calling client.controller callback."
+        callback null, null
+      client = newClient(projectId, controller)
+      client.send messageMaker.handshakeMessage()
+
+    after ->
+      server.destroy()
+    afterEach ->
+      server.onHandshake = null
+
+    it 'should reopen socket'
+    it 'should resend handshake'

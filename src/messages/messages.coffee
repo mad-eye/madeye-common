@@ -5,6 +5,7 @@ _ = require 'underscore'
 
 #Message Actions
 messageAction =
+  HEARTBEAT: 'heartbeat'
   HANDSHAKE : 'handshake'
   CONFIRM : 'confirm'
   REPLY : 'reply'
@@ -36,6 +37,12 @@ messageMaker =
     }, options
 
   #Message constructors
+  heartbeatMessage: () ->
+    @message {
+      action: messageAction.HEARTBEAT
+      shouldConfirm : false
+    }
+
   handshakeMessage: (projectId) ->
     @message {
       action: messageAction.HANDSHAKE
@@ -54,6 +61,7 @@ messageMaker =
       action : messageAction.REPLY
       replyTo : message.id
       replyAction : message.action
+      shouldConfirm : false
       data : data
     }
 
