@@ -40,9 +40,6 @@ describe 'SocketClient', ->
       assert.equal socket.readyState, MockSocket.CLOSED
     it 'should set socket to null', ->
       assert.equal socketClient.socket, null
-    it 'should send a CLOSE_CONNECTION message', ->
-      assert.equal sentMessages.length, 1
-      assert.equal sentMessages[0].action, messageAction.CLOSE_CONNECTION
 
 
   describe 'send', ->

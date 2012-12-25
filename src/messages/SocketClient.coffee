@@ -16,13 +16,9 @@ class SocketClient
 
   destroy: (callback) ->
     @stopHeartbeat()
-    self = this
-    flow.exec ->
-      self.send messageMaker.closeMessage(), this
-    , ->
-      self.socket?.close()
-      self.socket = null
-      callback?()
+    @socket?.close()
+    @socket = null
+    callback?() #An eye towards the future
 
   handleMessage: (message) ->
     #console.log "Client received message", message.id

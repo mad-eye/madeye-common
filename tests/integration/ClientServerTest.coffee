@@ -168,5 +168,25 @@ describe 'SocketServerClient:', ->
     it 'should resend handshake'
 
   describe 'closing down SocketClient', ->
-    it "should shut down gracefully"
+    projectId = null
+    server = client = socket = null
+    before ->
+      server = newServer()
+
+    beforeEach (done) ->
+      server.onHandshake = (projId) ->
+        console.log "Got handshake for #{projId}"
+        done()
+      projectId = uuid.v4()
+      client = newClient projectId
+      client.send messageMaker.handshakeMessage()
+
+    after ->
+      server.destroy()
+    afterEach ->
+      server.onHandshake = null
+
+    it "should shut down gracefully", (done) ->
+      client.destroy done
     it "should close socket on SocketServer"
+
