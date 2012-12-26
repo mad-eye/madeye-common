@@ -67,7 +67,7 @@ class SocketClient
     return unless socket?
     @socket.onopen = =>
       #This will hopefully re-establish a two-way connection to azkaban.
-      console.log "Reopening socket"
+      #console.log "Reopening socket"
       if @projectId
         @send messageMaker.handshakeMessage(), (err) ->
           console.log "Error in onopen handshake:", err if err
