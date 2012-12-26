@@ -55,6 +55,8 @@ class SocketServer
       throw new Error msg
 
     socket.on 'close', (reason) =>
+      projectId = @projectIdMap[socket.id]
+      @controller?.closeProject? projectId
       @detachSocket socket
       console.log "Socket #{socket.id} disconnected (#{reason})"
 
