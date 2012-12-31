@@ -56,6 +56,7 @@ class SocketServer
 
     socket.on 'close', (reason) =>
       projectId = @projectIdMap[socket.id]
+      #FIXME: Need a new architecture that makes closing the project more natural.  Probably event-driven?
       @controller?.closeProject? projectId
       @detachSocket socket
       console.log "Socket #{socket.id} disconnected (#{reason})"
@@ -77,7 +78,7 @@ class SocketServer
     else if message.replyTo?
       callback = @registeredCallbacks[message.replyTo]
       if callback
-        #console.log "Invoking registered callback to #{message.replyTo}", callback
+        #console.log "Invoking registered callback to #{message.replyTo}"
         if message.error
           callback message.error
         else
