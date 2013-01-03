@@ -55,9 +55,6 @@ class SocketServer
       throw new Error msg
 
     socket.on 'close', (reason) =>
-      projectId = @projectIdMap[socket.id]
-      #FIXME: Need a new architecture that makes closing the project more natural.  Probably event-driven?
-      @controller?.closeProject? projectId
       @detachSocket socket
       console.log "Socket #{socket.id} disconnected (#{reason})"
 
@@ -103,8 +100,12 @@ class SocketServer
 
   detachSocket: (socket) ->
     projectId = @projectIdMap[socket.id]
-    delete @liveSockets[projectId] if projectId
     delete @projectIdMap[socket.id]
+    #Check to see if this is still the right socket for the project
+    if projectId and @liveSockets[projectId] == socket
+      delete @liveSockets[projectId]
+      #FIXME: Need a new architecture that makes closing the project more natural.  Probably event-driven?
+      @controller?.closeProject? projectId
 
   send: (socket, message) =>
     #console.log "SocketServer sending message:", message

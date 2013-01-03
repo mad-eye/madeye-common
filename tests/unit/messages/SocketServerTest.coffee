@@ -15,15 +15,54 @@ describe 'SocketServer', ->
       socketServer = new SocketServer()
       socket = new MockSocket()
       socketServer.attachSocket socket, projectId
-    it 'should store sockets by both socket.id and projectId', ->
+    it 'should store sockets by projectId', ->
       assert.equal socket, socketServer.liveSockets[projectId]
-    it 'should be cleaned out by @detachSocket', ->
-      socketServer.detachSocket socket
-      assert.equal socketServer.liveSockets[projectId], null
+    it 'should store projectId by socket.id', ->
+      assert.equal socketServer.projectIdMap[socket.id], projectId
 
   describe 'detachSocket', ->
-    it 'should remove socket.id from projectIdMap'
-    it 'should remove projectId from liveSockets'
+    closedProjectId = projectId = null
+    before ->
+      projectId = uuid.v4()
+      socketServer = new SocketServer closeProject : (projId) ->
+        console.log "Calling closeProject"
+        closedProjectId = projId
+      socket = new MockSocket()
+      socketServer.attachSocket socket, projectId
+      socketServer.detachSocket socket
+
+    it 'should remove socket.id from projectIdMap', ->
+      assert.equal socketServer.projectIdMap[socket.id], null
+
+    it 'should remove projectId from liveSockets', ->
+      assert.equal socketServer.liveSockets[projectId], null
+
+    it 'should close project', ->
+      assert.equal closedProjectId, projectId
+
+  describe 'detachSocket when the socket has been replaced fweep', ->
+    closedProjectId = projectId = null
+    socket2 = null
+    before ->
+      projectId = uuid.v4()
+      socketServer = new SocketServer closeProject : (projId) ->
+        console.log "Calling closeProject"
+        closedProjectId = projId
+      socket = new MockSocket()
+      socketServer.attachSocket socket, projectId
+      socket2 = new MockSocket()
+      socketServer.attachSocket socket2, projectId
+      socketServer.detachSocket socket
+
+    it 'should still remove socket.id from projectIdMap', ->
+      assert.equal socketServer.projectIdMap[socket.id], null
+
+    it 'should not remove projectId from liveSockets', ->
+      assert.equal socketServer.liveSockets[projectId], socket2
+
+    it 'should not close project', ->
+      assert.equal closedProjectId, null
+
 
   describe 'connect', ->
     before (done) ->
