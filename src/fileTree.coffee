@@ -9,12 +9,13 @@ class FileTree
     @files = []
     @addFiles rawFiles
 
-  addFiles: (rawFiles)-> #straight outta mongo, pull files out sorted..?
+  addFiles: (rawFiles=[])-> #straight outta mongo, pull files out sorted..?
     rawFiles.forEach (rawFile) =>
       @addFile rawFile, false #don't sort
     @sort()
 
   addFile: (rawFile, sort=false) ->
+    return unless rawFile?
     @files.push(new File rawFile, @rootDir)
 
   sort: ->
