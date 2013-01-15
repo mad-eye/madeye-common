@@ -23,12 +23,14 @@ class FileTree
 
   #TODO back this by map
   findByPath: (path)->
+    return null unless path?
     for file in @files
       if file.path == path
         return file
     null
 
   findById: (id)->
+    return null unless id?
     for file in @files
       if file._id == id
         return file
