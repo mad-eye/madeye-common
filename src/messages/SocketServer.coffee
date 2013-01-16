@@ -31,9 +31,7 @@ class SocketServer
       self.server?.close()
       self.server = null
       self.initialize()
-      this()
-    , callback
-
+      callback?()
 
   listen: (bcPort) ->
     @server = connect(
