@@ -24,7 +24,7 @@ errorMessage =
   MISSING_OBJECT : 'The object request was missing.'
   # Network issues
   CONNECTION_CLOSED : 'The connection is closed.'
-  DATABASE_ERROR : 'There was an error with the databse.'
+  DATABASE_ERROR : 'There was an error with the database.'
 
 errors =
   new : (type, options={}) ->

@@ -25,14 +25,22 @@ describe 'SocketClient', ->
 
 
   describe 'destroy', ->
-    before ->
-      socket = new MockSocket()
+    sentMessages = projectId = null
+    before (done) ->
+      projectId = uuid.v4()
+      sentMessages = []
+      socket = new MockSocket onsend: (message) ->
+        sentMessages.push message
+        if message.action == messageAction.CLOSE_CONNECTION
+          socket.receive messageMaker.replyMessage message
       socketClient = new SocketClient(socket)
-      socketClient.destroy()
+      socketClient.projectId = projectId
+      socketClient.destroy done
     it 'should close socket', ->
       assert.equal socket.readyState, MockSocket.CLOSED
     it 'should set socket to null', ->
       assert.equal socketClient.socket, null
+
 
   describe 'send', ->
     message = null
@@ -88,7 +96,7 @@ describe 'SocketClient', ->
         assert.equal err.type, errorType.INVALID_PARAM
         done()
         
-    it 'should callback an error if projectId is not set fweep', (done) ->
+    it 'should callback an error if projectId is not set', (done) ->
       console.log "Sending test message", message
       socketClient.projectId = null
       socketClient.send message, (err, replyMsg) ->

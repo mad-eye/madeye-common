@@ -68,6 +68,24 @@ describe "File", ->
       assert.equal file3.parentPath, 'dir1/dir2'
 
 describe "FileTree", ->
+
+  describe "constructor", ->
+    it "accepts a null rawFiles argument", ->
+      #Shouldn't throw an error
+      tree = new FileTree
+
+  describe "addFiles", ->
+    it "accepts a null rawFiles argument", ->
+      #Shouldn't throw an error
+      tree = new FileTree
+      tree.addFiles null
+
+  describe "addFile", ->
+    it "accepts a null rawFile argument", ->
+      #Shouldn't throw an error
+      tree = new FileTree
+      tree.addFile null
+
   describe "sort", ->
     it "sorts", ->
       tree = new FileTree [{path: "/readme"}, {path: "/azkaban"}, {path: "/Hogwarts"}]

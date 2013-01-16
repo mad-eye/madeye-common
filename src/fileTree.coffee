@@ -1,7 +1,6 @@
 _ = require("underscore") unless _?
 
 class FileTree
-  #TODO take a root arg as well so we can show relative paths
   constructor: (rawFiles=[], @rootDir="")->
     @setFiles rawFiles
 
@@ -9,12 +8,13 @@ class FileTree
     @files = []
     @addFiles rawFiles
 
-  addFiles: (rawFiles)-> #straight outta mongo, pull files out sorted..?
+  addFiles: (rawFiles=[])-> #straight outta mongo, pull files out sorted..?
     rawFiles.forEach (rawFile) =>
       @addFile rawFile, false #don't sort
     @sort()
 
   addFile: (rawFile, sort=false) ->
+    return unless rawFile?
     @files.push(new File rawFile, @rootDir)
 
   sort: ->
@@ -22,12 +22,14 @@ class FileTree
 
   #TODO back this by map
   findByPath: (path)->
+    return null unless path?
     for file in @files
       if file.path == path
         return file
     null
 
   findById: (id)->
+    return null unless id?
     for file in @files
       if file._id == id
         return file
@@ -36,7 +38,6 @@ class FileTree
 class File
   constructor: (rawFile, rootDir="")-> #straight outta mongo
     _.extend @, rawFile
-
     @path = trimPath rawFile.path, rootDir
 
   #TODO see if its easy to make this syntax nicer

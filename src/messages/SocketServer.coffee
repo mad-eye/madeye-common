@@ -1,5 +1,6 @@
 browserChannel = require('browserchannel').server
 connect = require('connect')
+flow = require 'flow'
 uuid = require 'node-uuid'
 {messageAction, messageMaker} = require './messages'
 {Settings} = require '../Settings'
@@ -12,16 +13,26 @@ class SocketServer
     @initialize()
   
   initialize: ->
+    #TODO: BC server already keeps track of live sockets -- use that instead?
     @liveSockets = {} # {projectId: socket}, to look sockets up for apogee-dementor communication
     @projectIdMap = {} # {socketId:projectId}, to look up entries in liveSockets for deletion
     @sentMessages = {}
     @registeredCallbacks = {}
 
-  destroy: ->
-    socket.stop() for projectId, socket of @liveSockets
-    @server?.close()
-    @server = null
-    @initialize()
+  destroy: (callback) ->
+    self = this #Need to do self because => even converts "this" into "_this"
+    flow.exec ->
+      for projectId, socket of self.liveSockets
+        console.log "Asking #{projectId} to stop."
+        socket.stop this.MULTI()
+      this.MULTI()() #Hack for case of no liveSockets
+    , ->
+      console.log "Closing down socket server"
+      self.server?.close()
+      self.server = null
+      self.initialize()
+      this()
+    , callback
 
 
   listen: (bcPort) ->
@@ -48,7 +59,10 @@ class SocketServer
       console.log "Socket #{socket.id} disconnected (#{reason})"
 
   handleMessage: (message, socket) ->
-    #console.log "Server received message", message
+    #console.log "Server received message", message.id
+    if message.action == messageAction.HEARTBEAT
+      #console.log "Server received heartbeat."
+      return
     if message.action == messageAction.HANDSHAKE
       #console.log "Receiving handshake for project #{message.projectId}"
       @attachSocket socket, message.projectId
@@ -61,7 +75,7 @@ class SocketServer
     else if message.replyTo?
       callback = @registeredCallbacks[message.replyTo]
       if callback
-        #console.log "Invoking registered callback to #{message.replyTo}", callback
+        #console.log "Invoking registered callback to #{message.replyTo}"
         if message.error
           callback message.error
         else
@@ -86,10 +100,15 @@ class SocketServer
 
   detachSocket: (socket) ->
     projectId = @projectIdMap[socket.id]
-    delete @liveSockets[projectId] if projectId
     delete @projectIdMap[socket.id]
+    #Check to see if this is still the right socket for the project
+    if projectId and @liveSockets[projectId] == socket
+      delete @liveSockets[projectId]
+      #FIXME: Need a new architecture that makes closing the project more natural.  Probably event-driven?
+      @controller?.closeProject? projectId
 
   send: (socket, message) =>
+    #console.log "SocketServer sending message:", message
     if message.shouldConfirm
       @sentMessages[message.id] = message
     socket.send message, (err) =>
@@ -105,6 +124,14 @@ class SocketServer
   #callback = (err, data) ->,
   tell: (projectId, message, callback) ->
     #console.log "Sending message to #{projectId}:", message
+    unless message?
+      console.warn "SocketServer.send trying to send non-object message:", message
+      callback? errors.new errorType.MISSING_PARAM
+      return
+    unless typeof message == 'object'
+      console.warn "SocketServer.send trying to send non-object message:", message
+      callback? errors.new errorType.INVALID_PARAM
+      return
     socket = @liveSockets[projectId]
     unless socket
       callback?(errors.new 'CONNECTION_CLOSED')

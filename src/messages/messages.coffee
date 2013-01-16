@@ -5,6 +5,7 @@ _ = require 'underscore'
 
 #Message Actions
 messageAction =
+  HEARTBEAT: 'heartbeat'
   HANDSHAKE : 'handshake'
   CONFIRM : 'confirm'
   REPLY : 'reply'
@@ -12,6 +13,7 @@ messageAction =
   SAVE_FILE : 'saveFile'
   ADD_FILES : 'addFiles'
   REMOVE_FILES : 'removeFiles'
+  CLOSE_CONNECTION : 'closeConnection'
 
 # Messages are of the form:
 #   id: uuid (required)
@@ -35,13 +37,19 @@ messageMaker =
       data : {}
     }, options
 
-  #Message constructors
+  ##Message constructors
+  #Client/Server messages
+  heartbeatMessage: () ->
+    @message {
+      action: messageAction.HEARTBEAT
+      shouldConfirm : false
+    }
+
   handshakeMessage: (projectId) ->
     @message {
       action: messageAction.HANDSHAKE
       projectId: projectId
     }
-
   confirmationMessage: (message) ->
     @message {
       action : messageAction.CONFIRM
@@ -49,26 +57,33 @@ messageMaker =
       shouldConfirm : false
     }
 
+  closeMessage: ->
+    @message {
+      action: messageAction.CLOSE_CONNECTION
+    }
+
   replyMessage: (message, data) ->
     @message {
       action : messageAction.REPLY
       replyTo : message.id
       replyAction : message.action
+      shouldConfirm : false
       data : data
     }
 
-  requestFileMessage : (fileId) ->
-    @message {
-      action : messageAction.REQUEST_FILE
-      fileId : fileId
-    }
-
+  #Operational messages
   errorMessage: (error, replyId) ->
     @message {
       action : messageAction.REPLY
       error : error
       shouldConfirm : false
       replyTo : replyId
+    }
+
+  requestFileMessage : (fileId) ->
+    @message {
+      action : messageAction.REQUEST_FILE
+      fileId : fileId
     }
 
   addFilesMessage: (files) ->
