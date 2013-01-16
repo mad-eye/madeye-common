@@ -12,8 +12,8 @@ Settings = {
   apogeePort: parseInt(process.env["MADEYE_APOGEE_PORT"]),
   bolideHost: process.env["MADEYE_BOLIDE_HOST"],
   bolidePort: process.env["MADEYE_BOLIDE_PORT"],
-  kissMetricsId: process.env["KISS_METRICS_ID"],
-  googleAnalyticsId: process.env["GOOGLE_ANALYTICS_ID"]
+  kissMetricsId: process.env["MADEYE_KISS_METRICS_ID"],
+  googleAnalyticsId: process.env["MADEYE_GOOGLE_ANALYTICS_ID"]
 }
 
 exports.Settings = Settings
