@@ -20,6 +20,10 @@ class FileTree
   sort: ->
     @files.sort File.compare
 
+  removeFiles: (paths) ->
+    @files = _.reject @files, (file) ->
+      file.path in paths
+
   #TODO back this by map
   findByPath: (path)->
     return null unless path?

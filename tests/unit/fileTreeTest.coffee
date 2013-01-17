@@ -3,6 +3,7 @@ File = require("../../src/fileTree").File
 assert = require "assert"
 _path = require "path"
 uuid = require "node-uuid"
+_ = require 'underscore'
 
 describe "File", ->
   IN_ORDER = -1
@@ -97,6 +98,19 @@ describe "FileTree", ->
     it "can find by path", ->
       tree = new FileTree [{path: "/readme"}, {path: "/azkaban"}, {path: "/Hogwarts"}]
       assert.deepEqual tree.findByPath("/readme"), new File({path: "/readme"})
+
+  describe "removeFiles", ->
+    tree = null
+    before ->
+      tree = new FileTree [{path: "/readme"}, {path: "/azkaban"}, {path: "/Hogwarts"}]
+      tree.removeFiles ["/readme", "/somethingelse"]
+
+    it "removes paths", ->
+      assert.ok !_.any tree.files, (file) ->
+        file.path == "/readme"
+
+    it "does not remove other files", ->
+      assert.equal tree.files.length, 2
 
 
 #TODO: This is duplicate of dementor/test/util/fileUtils.  Move that to common.
