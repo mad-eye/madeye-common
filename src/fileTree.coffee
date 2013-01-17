@@ -38,7 +38,6 @@ class FileTree
 class File
   constructor: (rawFile, rootDir="")-> #straight outta mongo
     _.extend @, rawFile
-    @path = trimPath rawFile.path, rootDir
 
   #TODO see if its easy to make this syntax nicer
   #something like this maybe?
@@ -65,12 +64,6 @@ class File
     [path1, path2] = [f1.path.replace(/\ /g, "!").replace(/\//g, " "),
       f2.path.replace(/\ /g, "!").replace(/\//g, " ")]
     if path1.toLowerCase() < path2.toLowerCase() then F1_FIRST else F2_FIRST
-
-trimPath = (path, rootDir) ->
-  if rootDir && path.indexOf(rootDir) == 0
-    path = path.substring rootDir.length
-    path = path.substring 1 unless rootDir=="" and path.charAt(0)!='/'
-  path
 
 stripSlash = (path) ->
   if path.charAt(0) == '/'
