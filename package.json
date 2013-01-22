@@ -10,7 +10,6 @@
     "coffee-script": "~1.4.0",
     "underscore": "~1.4.3",
     "node-uuid": "~1.4.0",
-    "browserchannel": "~1.0.0",
     "flow": "~0.2.2"
   },
   "devDependencies": {
