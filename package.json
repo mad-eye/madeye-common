@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "jake": "~0.5.6",
-    "mocha": "~1.7.0",
-    "connect": "~2.7.2"
+    "mocha": "~1.7.0"
   }
 }
