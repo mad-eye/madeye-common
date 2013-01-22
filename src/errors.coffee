@@ -14,6 +14,7 @@ errorType =
   # Network issues
   CONNECTION_CLOSED : 'CONNECTION_CLOSED'
   DATABASE_ERROR : 'DATABASE_ERROR'
+  NETWORK_ERROR : 'NETWORK_ERROR'
 
 errorMessage =
   MISSING_PARAM : 'Required parameter is missing.'
@@ -25,6 +26,7 @@ errorMessage =
   # Network issues
   CONNECTION_CLOSED : 'The connection is closed.'
   DATABASE_ERROR : 'There was an error with the database.'
+  NETWORK_ERROR : 'There was an error with the connection.'
 
 errors =
   new : (type, options={}) ->
