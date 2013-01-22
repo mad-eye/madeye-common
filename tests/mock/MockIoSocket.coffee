@@ -2,6 +2,7 @@
 class MockIoSocket
   constructor: (@events={})->
     #event hooks
+    @values = {}
 
   connect: (callback) ->
     @trigger 'connect'
@@ -19,6 +20,13 @@ class MockIoSocket
 
   emit: (action, data, callback) ->
     @onEmit? action, data, callback
+
+  set: (key, value, callback) ->
+    @values[key] = value
+    callback?()
+
+  get: (key, callback) ->
+    callback @values[key]
 
   #####
   #Test methods (should only be used by test classes
