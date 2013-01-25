@@ -2,8 +2,6 @@
 #Clarify httpHost name (azkaban)
 
 Settings = {
-  bcHost: process.env["MADEYE_BC_HOST"],
-  bcPort: parseInt(process.env["MADEYE_BC_PORT"]),
   httpHost: process.env["MADEYE_HTTP_HOST"],
   httpPort: parseInt(process.env["MADEYE_HTTP_PORT"]),
   mongoHost: process.env["MADEYE_MONGO_HOST"],
