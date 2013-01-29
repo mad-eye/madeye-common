@@ -32,7 +32,7 @@ class MockIoSocket
 
   trigger: (action) ->
     args = [].slice.call(arguments, 1)
-    console.log "Triggering #{action} for", args
+    #console.log "Triggering #{action} for", args
     @events[action]?.apply this, args
 
 exports.MockSocket = MockIoSocket
