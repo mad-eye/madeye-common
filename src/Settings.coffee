@@ -2,8 +2,11 @@
 #Clarify httpHost name (azkaban)
 
 Settings = {
+  apogeePort: process.env["MADEYE_APOGEE_PORT"],
   apogeeUrl: process.env["MADEYE_APOGEE_URL"],
+  azkabanPort: process.env["MADEYE_AZKABAN_PORT"],
   azkabanUrl: process.env["MADEYE_AZKABAN_URL"],
+  bolidePort: process.env["MADEYE_BOLIDE_PORT"],
   bolideUrl: process.env["MADEYE_BOLIDE_URL"],
   mongoUrl: process.env["MADEYE_MONGO_URL"],
   kissMetricsId: process.env["MADEYE_KISS_METRICS_ID"],
