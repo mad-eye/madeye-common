@@ -1,5 +1,3 @@
-#TODO: Change Host to Hostname
-#Clarify httpHost name (azkaban)
 
 Settings = {
   apogeePort: process.env["MADEYE_APOGEE_PORT"],
