@@ -3,6 +3,7 @@ File = require("../../src/fileTree").File
 assert = require "assert"
 _path = require "path"
 uuid = require "node-uuid"
+_ = require 'underscore'
 
 describe "File", ->
   IN_ORDER = -1
@@ -68,6 +69,24 @@ describe "File", ->
       assert.equal file3.parentPath, 'dir1/dir2'
 
 describe "FileTree", ->
+
+  describe "constructor", ->
+    it "accepts a null rawFiles argument", ->
+      #Shouldn't throw an error
+      tree = new FileTree
+
+  describe "addFiles", ->
+    it "accepts a null rawFiles argument", ->
+      #Shouldn't throw an error
+      tree = new FileTree
+      tree.addFiles null
+
+  describe "addFile", ->
+    it "accepts a null rawFile argument", ->
+      #Shouldn't throw an error
+      tree = new FileTree
+      tree.addFile null
+
   describe "sort", ->
     it "sorts", ->
       tree = new FileTree [{path: "/readme"}, {path: "/azkaban"}, {path: "/Hogwarts"}]
@@ -79,6 +98,19 @@ describe "FileTree", ->
     it "can find by path", ->
       tree = new FileTree [{path: "/readme"}, {path: "/azkaban"}, {path: "/Hogwarts"}]
       assert.deepEqual tree.findByPath("/readme"), new File({path: "/readme"})
+
+  describe "removeFiles", ->
+    tree = null
+    before ->
+      tree = new FileTree [{path: "/readme"}, {path: "/azkaban"}, {path: "/Hogwarts"}]
+      tree.removeFiles ["/readme", "/somethingelse"]
+
+    it "removes paths", ->
+      assert.ok !_.any tree.files, (file) ->
+        file.path == "/readme"
+
+    it "does not remove other files", ->
+      assert.equal tree.files.length, 2
 
 
 #TODO: This is duplicate of dementor/test/util/fileUtils.  Move that to common.

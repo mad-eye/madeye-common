@@ -10,9 +10,11 @@ errorType =
   NO_FILE : 'NO_FILE'
   IS_DIR : 'IS_DIR'
   UNKNOWN_ACTION : 'UNKNOWN_ACTION'
+  MISSING_OBJECT : 'MISSING_OBJECT'
   # Network issues
   CONNECTION_CLOSED : 'CONNECTION_CLOSED'
   DATABASE_ERROR : 'DATABASE_ERROR'
+  NETWORK_ERROR : 'NETWORK_ERROR'
 
 errorMessage =
   MISSING_PARAM : 'Required parameter is missing.'
@@ -20,9 +22,11 @@ errorMessage =
   NO_FILE : 'File not found'
   IS_DIR : 'Illegal operation on a directory.'
   UNKNOWN_ACTION : 'The action is unknown'
+  MISSING_OBJECT : 'The object request was missing.'
   # Network issues
   CONNECTION_CLOSED : 'The connection is closed.'
-  DATABASE_ERROR : 'There was an error with the databse.'
+  DATABASE_ERROR : 'There was an error with the database.'
+  NETWORK_ERROR : 'There was an error with the connection.'
 
 errors =
   new : (type, options={}) ->
