@@ -53,7 +53,6 @@ describe "File", ->
       fileTree = constructFileTree fileMap
     it "should give null for top level files and dirs", ->
       file1 = fileTree.findByPath 'file1'
-      console.log "Found file1:", file1
       dir1 = fileTree.findByPath 'dir1'
       dir3 = fileTree.findByPath 'dir3'
       assert.equal file1.parentPath, null
@@ -117,19 +116,16 @@ describe "FileTree", ->
 constructFileTree = (fileMap, root, fileTree) ->
   fileTree ?= new FileTree(null, root)
   makeRawFile = (path, value) ->
-    console.log "Making raw file with path #{path} and value #{value}"
     rawFile = {
       _id : uuid.v4()
       path : path
       isDir : (typeof value != "string")
     }
-    console.log "Made rawfile:", rawFile
     return rawFile
   for key, value of fileMap
     fileTree.addFile makeRawFile _path.join(root, key), value
     unless typeof value == "string"
       constructFileTree(value, _path.join(root, key), fileTree)
-  console.log "Contructed fileTree:", fileTree unless root?
   return fileTree
 
 
