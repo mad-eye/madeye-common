@@ -33,6 +33,7 @@ errors =
     err =
       type: errorType[type]
       message: errorMessage[type]
+      madeye: true
     _.extend err, options
     return err
 
