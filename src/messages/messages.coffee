@@ -14,6 +14,7 @@ messageAction =
   ADD_FILES : 'addFiles'
   REMOVE_FILES : 'removeFiles'
   CLOSE_CONNECTION : 'closeConnection'
+  METRIC : 'metric'
 
 # Messages are of the form:
 #   id: uuid (required)
@@ -28,6 +29,7 @@ messageAction =
 #   data: JSON object payload
 #
 # Each message must have EITHER an action OR an error, but not both.
+# XXX: These are now obselete since we use socket.io
 messageMaker =
   message : (options) ->
     message = _.extend {
