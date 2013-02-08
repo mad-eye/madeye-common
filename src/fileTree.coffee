@@ -42,6 +42,10 @@ class FileTree
 class File
   constructor: (rawFile)-> #straight outta mongo
     _.extend @, rawFile
+    if '\\' in @path
+      @sep = '\\'
+    else
+      @sep = '/'
 
   [F1_FIRST, F2_FIRST] = [-1,1]
   @compare: (f1, f2) ->
@@ -52,17 +56,24 @@ class File
       f2.path.replace(/\ /g, "!").replace(/\//g, " ")]
     if path1.toLowerCase() < path2.toLowerCase() then F1_FIRST else F2_FIRST
 
+  stripSlash : (path) ->
+    if path.charAt(0) == @sep
+      path = path.substring(1)
+    if path.charAt(path.length-1) == @sep
+      path = path.substring(0, path.length-1)
+    path
+
 Object.defineProperty File.prototype, 'filename',
   get: ->
-    stripSlash(@path).split("/").pop()
+    @stripSlash(@path).split(@sep).pop()
 
 Object.defineProperty File.prototype, 'depth',
   get: ->
-    stripSlash(@path).split("/").length - 1 #don't count directory itself or leading /
+    @stripSlash(@path).split(@sep).length - 1 #don't count directory itself or leading /
 
 Object.defineProperty File.prototype, 'parentPath',
   get: ->
-    rightSlash = @path.lastIndexOf('/')
+    rightSlash = @path.lastIndexOf(@sep)
     if rightSlash > 0
       return @path.substring 0, rightSlash
     else
@@ -70,12 +81,6 @@ Object.defineProperty File.prototype, 'parentPath',
 
 
 
-stripSlash = (path) ->
-  if path.charAt(0) == '/'
-    path = path.substring(1)
-  if path.charAt(path.length-1) == '/'
-    path = path.substring(0, path.length-1)
-  path
 
 exports.FileTree = FileTree
 exports.File = File

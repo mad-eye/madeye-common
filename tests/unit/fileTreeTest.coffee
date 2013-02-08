@@ -74,9 +74,9 @@ describe "File", ->
     it 'should be foo.txt for /a/path/foo.txt', ->
       file = new File path: '/a/path/foo.txt'
       assert.equal file.filename, 'foo.txt'
-    it 'should be foo.txt for C:\\\\a\\path\\foo.txt'
-      #file = new File path: 'C:\\\\a\\path\\foo.txt'
-      #assert.equal file.filename, 'foo.txt'
+    it 'should be foo.txt for C:\\\\a\\path\\foo.txt', ->
+      file = new File path: 'C:\\\\a\\path\\foo.txt'
+      assert.equal file.filename, 'foo.txt'
 
 
 describe "FileTree", ->
