@@ -67,6 +67,18 @@ describe "File", ->
       file3 = fileTree.findByPath 'dir1/dir2/file3'
       assert.equal file3.parentPath, 'dir1/dir2'
 
+  describe 'filename', ->
+    it 'should be foo.txt for a/path/foo.txt', ->
+      file = new File path: 'a/path/foo.txt'
+      assert.equal file.filename, 'foo.txt'
+    it 'should be foo.txt for /a/path/foo.txt', ->
+      file = new File path: '/a/path/foo.txt'
+      assert.equal file.filename, 'foo.txt'
+    it 'should be foo.txt for C:\\\\a\\path\\foo.txt'
+      #file = new File path: 'C:\\\\a\\path\\foo.txt'
+      #assert.equal file.filename, 'foo.txt'
+
+
 describe "FileTree", ->
 
   describe "constructor", ->

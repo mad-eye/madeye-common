@@ -40,25 +40,8 @@ class FileTree
     null
 
 class File
-  constructor: (rawFile, rootDir="")-> #straight outta mongo
+  constructor: (rawFile)-> #straight outta mongo
     _.extend @, rawFile
-
-  #TODO see if its easy to make this syntax nicer
-  #something like this maybe?
-  #  @getter "filename", ->
-  #    @path.split("/").pop()
-  @.prototype.__defineGetter__ "filename", ->
-    stripSlash(@path).split("/").pop()
-
-  @.prototype.__defineGetter__ "depth", ->
-    stripSlash(@path).split("/").length - 1 #don't count directory itself or leading /
-
-  @.prototype.__defineGetter__ "parentPath", ->
-    rightSlash = @path.lastIndexOf('/')
-    if rightSlash > 0
-      return @path.substring 0, rightSlash
-    else
-      return null
 
   [F1_FIRST, F2_FIRST] = [-1,1]
   @compare: (f1, f2) ->
@@ -68,6 +51,24 @@ class File
     [path1, path2] = [f1.path.replace(/\ /g, "!").replace(/\//g, " "),
       f2.path.replace(/\ /g, "!").replace(/\//g, " ")]
     if path1.toLowerCase() < path2.toLowerCase() then F1_FIRST else F2_FIRST
+
+Object.defineProperty File.prototype, 'filename',
+  get: ->
+    stripSlash(@path).split("/").pop()
+
+Object.defineProperty File.prototype, 'depth',
+  get: ->
+    stripSlash(@path).split("/").length - 1 #don't count directory itself or leading /
+
+Object.defineProperty File.prototype, 'parentPath',
+  get: ->
+    rightSlash = @path.lastIndexOf('/')
+    if rightSlash > 0
+      return @path.substring 0, rightSlash
+    else
+      return null
+
+
 
 stripSlash = (path) ->
   if path.charAt(0) == '/'
