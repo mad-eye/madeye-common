@@ -1,5 +1,11 @@
 _ = require("underscore") unless _?
 
+#emulate ES5 getter/setter API using legacy APIs
+if Object.prototype.__defineGetter__ && !Object.defineProperty
+  Object.defineProperty = (obj,prop,desc) ->
+    if ("get" in desc) then obj.__defineGetter__(prop,desc.get)
+    if ("set" in desc) then obj.__defineSetter__(prop,desc.set)
+
 class FileTree
   constructor: (rawFiles=[], @rootDir="")->
     @setFiles rawFiles
@@ -64,12 +70,10 @@ class File
     path
 
 Object.defineProperty File.prototype, 'filename',
-  get: ->
-    @stripSlash(@path).split(@sep).pop()
+  get: -> @stripSlash(@path).split(@sep).pop()
 
 Object.defineProperty File.prototype, 'depth',
-  get: ->
-    @stripSlash(@path).split(@sep).length - 1 #don't count directory itself or leading /
+  get: -> @stripSlash(@path).split(@sep).length - 1 #don't count directory itself or leading /
 
 Object.defineProperty File.prototype, 'parentPath',
   get: ->
