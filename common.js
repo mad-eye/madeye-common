@@ -6,8 +6,8 @@ exports.File = require('./src/fileTree').File
 exports.MockSocket = require('./tests/mock/MockIoSocket').MockSocket
 
 //Messages
-exports.messageMaker = require('./src/messages/messages').messageMaker
-exports.messageAction = require('./src/messages/messages').messageAction
+exports.messageMaker = require('./src/messages').messageMaker
+exports.messageAction = require('./src/messages').messageAction
 
 //Errors
 exports.errors = require('./src/errors').errors
