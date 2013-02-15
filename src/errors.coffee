@@ -11,10 +11,12 @@ errorType =
   IS_DIR : 'IS_DIR'
   UNKNOWN_ACTION : 'UNKNOWN_ACTION'
   MISSING_OBJECT : 'MISSING_OBJECT'
+  OUT_OF_DATE : 'OUT_OF_DATE'
   # Network issues
   CONNECTION_CLOSED : 'CONNECTION_CLOSED'
   DATABASE_ERROR : 'DATABASE_ERROR'
   NETWORK_ERROR : 'NETWORK_ERROR'
+
 
 errorMessage =
   MISSING_PARAM : 'Required parameter is missing.'
@@ -23,6 +25,7 @@ errorMessage =
   IS_DIR : 'Illegal operation on a directory.'
   UNKNOWN_ACTION : 'The action is unknown'
   MISSING_OBJECT : 'The object request was missing.'
+  OUT_OF_DATE : "Your version of MadEye is out of date.  Please run 'sudo npm update -g madeye' to get the latest."
   # Network issues
   CONNECTION_CLOSED : 'The connection is closed.'
   DATABASE_ERROR : 'There was an error with the database.'
