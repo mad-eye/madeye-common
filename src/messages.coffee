@@ -15,6 +15,7 @@ messageAction =
   REMOVE_FILES : 'removeFiles'
   CLOSE_CONNECTION : 'closeConnection'
   METRIC : 'metric'
+  WARNING: 'warning'
 
 # Messages are of the form:
 #   id: uuid (required)
