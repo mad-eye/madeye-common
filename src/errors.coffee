@@ -13,6 +13,7 @@ errorType =
   MISSING_OBJECT : 'MISSING_OBJECT'
   OUT_OF_DATE : 'OUT_OF_DATE'
   PERMISSION_DENIED : 'PERMISSION_DENIED'
+  INITIALIZED_FILE_NOT_EMPTY : 'INITIALIZED_FILE_NOT_EMPTY' #When we are trying to initialize a sharejs file but it already has been
   # Network issues
   CONNECTION_CLOSED : 'CONNECTION_CLOSED'
   DATABASE_ERROR : 'DATABASE_ERROR'
@@ -28,6 +29,7 @@ errorMessage =
   MISSING_OBJECT : 'The object request was missing.'
   OUT_OF_DATE : "Your version of MadEye is out of date.  Please run 'sudo npm update -g madeye' to get the latest."
   PERMISSION_DENIED : "You don't have the right permissions for: "
+  INITIALIZED_FILE_NOT_EMPTY : "The file has already been initialized.  Using existing version."
   # Network issues
   CONNECTION_CLOSED : 'The connection is closed.'
   DATABASE_ERROR : 'There was an error with the database.'
