@@ -17,6 +17,7 @@ errorType =
   # Network issues
   CONNECTION_CLOSED : 'CONNECTION_CLOSED'
   DATABASE_ERROR : 'DATABASE_ERROR'
+  SHAREJS_ERROR : 'SHAREJS_ERROR'
   NETWORK_ERROR : 'NETWORK_ERROR'
 
 
@@ -33,6 +34,7 @@ errorMessage =
   # Network issues
   CONNECTION_CLOSED : 'The connection is closed.'
   DATABASE_ERROR : 'There was an error with the database.'
+  SHAREJS_ERROR : 'We had trouble syncing the editor.  Please reload the page.'
   NETWORK_ERROR : 'There was an error with the connection.'
 
 errors =
