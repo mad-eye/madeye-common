@@ -8,5 +8,5 @@ else
     production=""
 fi
 
-npm install -q $productiom
+npm install -q $production
 
