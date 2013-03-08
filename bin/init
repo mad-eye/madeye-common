@@ -1,4 +1,12 @@
 #! /bin/sh
 
-npm install -q
+#Use --production to npm install --production
+if [ "$1" == "--production" ]; then
+    production="--production"
+    echo Using production flag: $production
+else
+    production=""
+fi
+
+npm install -q $productiom
 
