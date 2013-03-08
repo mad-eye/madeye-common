@@ -1,7 +1,7 @@
 #! /bin/sh
 
 #Use --production to npm install --production
-if [ "$1" == "--production" ]; then
+if [ "$1" = "--production" ]; then
     production="--production"
     echo Using production flag: $production
 else
