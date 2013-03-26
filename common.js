@@ -13,3 +13,6 @@ exports.messageAction = require('./src/messages').messageAction
 exports.errors = require('./src/errors').errors
 exports.errorType = require('./src/errors').errorType
 
+//Tools
+exports.crc32 = require('./src/crc32')
+
