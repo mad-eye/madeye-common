@@ -37,7 +37,8 @@ var crc32 = function(str) {
 
   //str = Utf8Encode(str);
 
-  if (typeof(crc) == "undefined") { crc = 0; }
+  str = str.replace(/\r\n|\r|\n/g,"\n");
+  var crc = 0;
   var x = 0;
   var y = 0;
 
