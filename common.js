@@ -14,5 +14,5 @@ exports.errors = require('./src/errors').errors
 exports.errorType = require('./src/errors').errorType
 
 //Tools
-exports.crc32 = require('./src/crc32')
+exports.crc32 = require('./src/crc32').crc32
 

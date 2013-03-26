@@ -52,4 +52,4 @@ var crc32 = function(str) {
 
 };
 
-module.exports = crc32
+exports.crc32 = crc32
