@@ -122,7 +122,7 @@ describe "FileTree", ->
 
 
 #TODO: This is duplicate of dementor/test/util/fileUtils.  Move that to common.
-constructFileTree = (fileMap, root, fileTree) ->
+constructFileTree = (fileMap, root="", fileTree) ->
   fileTree ?= new FileTree(null, root)
   makeRawFile = (path, value) ->
     rawFile = {
