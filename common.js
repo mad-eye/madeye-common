@@ -15,4 +15,4 @@ exports.errorType = require('./src/errors').errorType
 
 //Tools
 exports.crc32 = require('./src/crc32').crc32
-
+exports.normalizePath = require("./src/fileUtils").normalizePath
