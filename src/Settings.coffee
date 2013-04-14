@@ -15,4 +15,7 @@ Settings = {
   logglyDementorKey: process.env["MADEYE_LOGGLY_DEMENTOR_KEY"]
 }
 
-MadEye.Settings = Settings
+if typeof exports == "undefined"
+  MadEye.Settings = Settings
+else
+  exports.Settings = Settings
