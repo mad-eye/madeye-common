@@ -53,4 +53,7 @@ var crc32 = function(str) {
 
 };
 
-exports.crc32 = crc32
+if (typeof exports != "undefined")
+  exports.crc32 = crc32
+else
+  MadEye.crc32 = crc32

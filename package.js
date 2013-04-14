@@ -11,7 +11,7 @@ Package.on_use(function (api, where) {
   api.use("coffeescript", ["client", "server"]);
   api.use("underscore", ["client", "server"]);
   api.add_files(["preMeteor.js"], ["client", "server"]);
-  api.add_files(["src/fileTree.coffee"], ["client", "server"])
+//  api.add_files(["src/fileTree.coffee"], ["client", "server"])
   api.add_files(["src/Settings.coffee"], "server");
   api.add_files(["src/crc32.js"], "client");
   api.add_files(["postMeteor.js"], ["client", "server"]);

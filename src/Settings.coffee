@@ -1,4 +1,3 @@
-
 Settings = {
   apogeePort: process.env["MADEYE_APOGEE_PORT"],
   apogeeHost: process.env["MADEYE_APOGEE_HOST"],
@@ -16,4 +15,4 @@ Settings = {
   logglyDementorKey: process.env["MADEYE_LOGGLY_DEMENTOR_KEY"]
 }
 
-exports.Settings = Settings
+MadEye.Settings = Settings
