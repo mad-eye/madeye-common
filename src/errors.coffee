@@ -20,6 +20,8 @@ errorType =
   SHAREJS_ERROR : 'SHAREJS_ERROR'
   NETWORK_ERROR : 'NETWORK_ERROR'
 
+  #Interview errors
+  UNKNOWN_LANGUAGE : 'UNKNOWN_LANGUAGE'
 
 errorMessage =
   MISSING_PARAM : 'Required parameter is missing.'
@@ -36,6 +38,9 @@ errorMessage =
   DATABASE_ERROR : 'There was an error with the database.'
   SHAREJS_ERROR : 'We had trouble syncing the editor.  Please reload the page.'
   NETWORK_ERROR : 'There was an error with the connection.'
+
+  #Interview errors
+  UNKNOWN_LANGUAGE : 'Currently we only support javascript, coffeescript, ruby, and python.'
 
 errors =
   new : (type, options={}) ->
