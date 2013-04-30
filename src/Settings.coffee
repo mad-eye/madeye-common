@@ -16,8 +16,6 @@ Settings = {
   logglyApogeeKey: process.env["MADEYE_LOGGLY_APOGEE_KEY"]
   logglyDementorKey: process.env["MADEYE_LOGGLY_DEMENTOR_KEY"]
   logglyNurmengardKey: process.env["MADEYE_LOGGLY_NURMENGARD_KEY"]
-  nurmengardUid: parseInt process.env["MADEYE_NURMENGARD_UID"]
-  nurmengardGid: parseInt process.env["MADEYE_NURMENGARD_GID"]
 }
 
 if typeof exports == "undefined"
