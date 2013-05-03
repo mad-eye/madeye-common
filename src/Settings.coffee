@@ -16,6 +16,8 @@ Settings = {
   logglyApogeeKey: process.env["MADEYE_LOGGLY_APOGEE_KEY"]
   logglyDementorKey: process.env["MADEYE_LOGGLY_DEMENTOR_KEY"]
   logglyNurmengardKey: process.env["MADEYE_LOGGLY_NURMENGARD_KEY"]
+  hangoutPrefix: process.env['MADEYE_HANGOUT_PREFIX']
+  hangoutAppId: process.env['MADEYE_HANGOUT_APP_ID']
 }
 
 if typeof exports == "undefined"
