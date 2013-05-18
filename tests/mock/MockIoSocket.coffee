@@ -3,12 +3,14 @@ class MockIoSocket
   constructor: (@events={})->
     #event hooks
     @values = {}
-    @socket = connect: (callback) =>
-      @trigger 'connect'
+    self = this
+    @socket = connect: (callback) ->
+      self.connected = true
+      self.trigger 'connect'
       callback?()
 
   disconnect: ->
-    @disconnected = true
+    @connected = false
     @trigger 'disconnect'
 
   on: (action, callback) ->
