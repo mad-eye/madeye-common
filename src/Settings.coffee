@@ -9,6 +9,7 @@ Settings = {
   bolideUrl: process.env["MADEYE_BOLIDE_URL"],
   nurmengardPort: process.env["MADEYE_NURMENGARD_PORT"],
   nurmengardUrl: process.env["MADEYE_NURMENGARD_URL"],
+  mongoPort: process.env["MADEYE_MONGO_PORT"],
   mongoUrl: process.env["MADEYE_MONGO_URL"],
   kissMetricsId: process.env["MADEYE_KISS_METRICS_ID"],
   googleAnalyticsId: process.env["MADEYE_GOOGLE_ANALYTICS_ID"],
