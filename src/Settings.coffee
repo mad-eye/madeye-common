@@ -1,10 +1,8 @@
 Settings = {
   apogeePort: process.env["MADEYE_APOGEE_PORT"],
-  apogeeHost: process.env["MADEYE_APOGEE_HOST"],
   apogeeDDPUrl: process.env["MADEYE_APOGEE_DDP_URL"],
   apogeeUrl: process.env["MADEYE_APOGEE_URL"],
   azkabanPort: process.env["MADEYE_AZKABAN_PORT"],
-  azkabanHost: process.env["MADEYE_AZKABAN_HOST"],
   azkabanUrl: process.env["MADEYE_AZKABAN_URL"],
   bolidePort: process.env["MADEYE_BOLIDE_PORT"],
   bolideUrl: process.env["MADEYE_BOLIDE_URL"],
