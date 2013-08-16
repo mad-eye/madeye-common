@@ -7,6 +7,7 @@ Settings = {
   bolideUrl: process.env["MADEYE_BOLIDE_URL"],
   ddpHost: process.env["MADEYE_DDP_HOST"],
   ddpPort: process.env["MADEYE_DDP_PORT"],
+  socketUrl: process.env["MADEYE_SOCKET_URL"],
   nurmengardPort: process.env["MADEYE_NURMENGARD_PORT"],
   nurmengardUrl: process.env["MADEYE_NURMENGARD_URL"],
   mongoPort: process.env["MADEYE_MONGO_PORT"],
