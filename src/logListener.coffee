@@ -11,7 +11,7 @@ levelnums =
 colors =
   error: clc.red.bold
   warn: clc.yellow
-  info: clc.reset
+  info: clc.bold
   debug: clc.blue
   trace: clc.blackBright
 
