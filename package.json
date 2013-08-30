@@ -7,9 +7,10 @@
     "test": "bin/test"
   },
   "dependencies": {
-    "coffee-script": "~1.6.3",
-    "underscore": "~1.5.1",
-    "node-uuid": "~1.4.0"
+    "coffee-script": "1.6.3",
+    "underscore": "1.5.1",
+    "node-uuid": "1.4.0",
+    "moment": "2.1.0"
   },
   "devDependencies": {
     "mocha": "~1.7.0",
