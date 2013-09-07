@@ -12,7 +12,6 @@ Settings = {
   nurmengardUrl: process.env["MADEYE_NURMENGARD_URL"]
   mongoPort: process.env["MADEYE_MONGO_PORT"]
   mongoUrl: process.env["MADEYE_MONGO_URL"]
-  kissMetricsId: process.env["MADEYE_KISS_METRICS_ID"]
   googleAnalyticsId: process.env["MADEYE_GOOGLE_ANALYTICS_ID"]
   logglyAzkabanKey: process.env["MADEYE_LOGGLY_AZKABAN_KEY"]
   logglyApogeeKey: process.env["MADEYE_LOGGLY_APOGEE_KEY"]
