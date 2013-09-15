@@ -20,4 +20,6 @@ exports.errorType = require('./src/errors').errorType
 //Tools
 exports.crc32 = require('./src/crc32').crc32
 exports.normalizePath = require("./src/fileUtils").normalizePath
+exports.findLineEndingType = require("./src/fileUtils").findLineEndingType
+exports.cleanupLineEndings = require("./src/fileUtils").cleanupLineEndings
 exports.cors = require('./src/cors')
