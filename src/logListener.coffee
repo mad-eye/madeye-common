@@ -1,5 +1,12 @@
-clc = require 'cli-color'
-moment = require 'moment'
+unless Meteor
+  moment = require 'moment'
+else
+  if Meteor.isServer
+    moment = Npm.require 'moment'
+  else #isClient
+    moment = (date) -> moment
+    moment.format = (format) -> ""
+
 
 levelnums =
   error: 0
@@ -8,23 +15,39 @@ levelnums =
   debug: 3
   trace: 4
 
-colors =
-  error: clc.red.bold
-  warn: clc.yellow
-  info: clc.bold
-  debug: clc.blue
-  trace: clc.blackBright
+if Meteor?.isClient
+  BROWSER = true
+
+  colors =
+    error: (x) -> x
+    warn: (x) -> x
+    info: (x) -> x
+    debug: (x) -> x
+    trace: (x) -> x
+else
+  if Meteor #isServer
+    clc = Npm.require 'cli-color'
+  else
+    clc = require 'cli-color'
+
+  colors =
+    error: clc.red.bold
+    warn: clc.yellow
+    info: clc.bold
+    debug: clc.blue
+    trace: clc.blackBright
 
 class LogListener
   constructor: (options) ->
     options ?= {}
+    @name = options.name ? 'root'
     @logLevel = options.logLevel ? 'info'
     @logLevelnum = levelnums[@logLevel]
     @onError = options.onError
 
   _printlog: (data) ->
     timestr = moment(data.timestamp).format("YYYY-MM-DD HH:mm:ss.SSS")
-    data.name ?= 'root'
+    data.name ?= @name
     color = colors[data.level]
     prefix = "#{timestr} #{color(data.level+": ")} [#{data.name}] "
 
@@ -38,7 +61,6 @@ class LogListener
           message += msg + ' '
         else
           message += JSON.stringify(msg) + ' '
-      data.message = message
 
     if levelnums[data.level] <= levelnums['warn']
       console.error prefix, message
@@ -46,15 +68,25 @@ class LogListener
       console.log prefix, message
 
 
-  log: (level, message) ->
+  #take single message arg, that is an array.
+  _log: (level, messages) ->
     return unless levelnums[level] <= @logLevelnum
     data =
       timestamp: new Date
       level: level
-      message: message
+      message: messages
     @_printlog data
     if level == 'error'
-      @onError message
+      @onError messages
+
+  #take multiple args
+  log: (level, messages...) -> @_log level, messages
+
+  trace: (messages...) -> @_log 'trace', messages
+  debug: (messages...) -> @_log 'debug', messages
+  info: (messages...) -> @_log 'info', messages
+  warn: (messages...) -> @_log 'warn', messages
+  error: (messages...) -> @_log 'error', messages
 
   listen: (emitter, name, level) ->
     level ?= @logLevel
@@ -68,4 +100,7 @@ class LogListener
       emitter.on l, (msgs...) =>
         @_printlog timestamp: new Date, level:l, name:name, message:msgs
 
-module.exports = LogListener
+if typeof exports == "undefined"
+  MadEye.LogListener = LogListener
+else
+  module.exports = LogListener
