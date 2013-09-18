@@ -1,4 +1,6 @@
-unless Meteor
+isMeteor = 'undefined' != typeof Meteor
+
+unless isMeteor
   moment = require 'moment'
 else
   if Meteor.isServer
@@ -25,7 +27,7 @@ if Meteor?.isClient
     debug: (x) -> x
     trace: (x) -> x
 else
-  if Meteor #isServer
+  if isMeteor #isServer
     clc = Npm.require 'cli-color'
   else
     clc = require 'cli-color'
