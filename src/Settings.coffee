@@ -14,7 +14,7 @@ Settings = {
   hangoutPrefix: process.env['MADEYE_HANGOUT_PREFIX']
   hangoutAppId: process.env['MADEYE_HANGOUT_APP_ID']
   userStaticFiles: process.env['MADEYE_USER_STATIC_FILES']
-  shareServer: process.env.MADEYE_SHARE_SERVER
+  shareHost: process.env.MADEYE_SHARE_HOST
 }
 
 if typeof exports == "undefined"
