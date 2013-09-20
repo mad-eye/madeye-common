@@ -2,7 +2,7 @@ require('coffee-script')
 exports.Settings = require('./src/Settings').Settings
 exports.FileTree = require('./src/fileTree').FileTree
 exports.File = require('./src/fileTree').File
-exports.LogListener = require('./src/logListener')
+exports.Logger = require('./src/logger')
 
 //Testing
 //exports.MockSocket = require('./tests/mock/MockSocket').MockSocket

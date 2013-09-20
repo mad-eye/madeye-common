@@ -10,7 +10,7 @@ else
     moment.format = (format) -> ""
 
 
-levelnums =
+__levelnums =
   error: 0
   warn: 1
   info: 2
@@ -39,19 +39,45 @@ else
     debug: clc.blue
     trace: clc.blackBright
 
-class LogListener
+
+__loggerLevel = 'info'
+__onError = null
+
+class Logger
   constructor: (options) ->
     options ?= {}
     @name = options.name ? 'root'
-    @logLevel = options.logLevel ? 'info'
-    @logLevelnum = levelnums[@logLevel]
-    @onError = options.onError
+    @logLevel = options.logLevel ? __loggerLevel
 
-  _printlog: (data) ->
+  @setLevel: (level) ->
+    __loggerLevel = level
+    #TODO: reset how we listen to listeners and loggers
+
+  @onError: (callback) ->
+    __onError = callback
+
+  @listen: (emitter, name, level=null) ->
+    unless emitter
+      throw Error "An object is required for logging!"
+    unless name
+      throw Error "Name is required for logging!"
+    level ?= __loggerLevel
+    levelnum = __levelnums[level]
+
+    emitter.on 'error', (err) =>
+      _printlog level:'error', name:name, message:err
+      __onError err
+
+    ['warn', 'info', 'debug', 'trace'].forEach (l) =>
+      return if __levelnums[l] > levelnum
+      emitter.on l, (msgs...) =>
+        _printlog timestamp: new Date, level:l, name:name, message:msgs
+
+  _printlog = (data) ->
     timestr = moment(data.timestamp).format("YYYY-MM-DD HH:mm:ss.SSS")
-    data.name ?= @name
     color = colors[data.level]
-    prefix = "#{timestr} #{color(data.level+": ")} [#{data.name}] "
+    prefix = "#{timestr} #{color(data.level+": ")} "
+    prefix += "[#{data.name}] " if data.name
 
     if 'string' == typeof data.message
       message = data.message
@@ -63,8 +89,8 @@ class LogListener
           message += msg + ' '
         else
           message += JSON.stringify(msg) + ' '
-
-    if levelnums[data.level] <= levelnums['warn']
+  
+    if __levelnums[data.level] <= __levelnums['warn']
       console.error prefix, message
     else
       console.log prefix, message
@@ -72,14 +98,14 @@ class LogListener
 
   #take single message arg, that is an array.
   _log: (level, messages) ->
-    return unless levelnums[level] <= @logLevelnum
+    return unless __levelnums[level] <= __levelnums[@logLevel]
     data =
       timestamp: new Date
       level: level
       message: messages
-    @_printlog data
+    _printlog data
     if level == 'error'
-      @onError messages
+      __onError messages
 
   #take multiple args
   log: (level, messages...) -> @_log level, messages
@@ -90,19 +116,7 @@ class LogListener
   warn: (messages...) -> @_log 'warn', messages
   error: (messages...) -> @_log 'error', messages
 
-  listen: (emitter, name, level) ->
-    level ?= @logLevel
-    levelnum = levelnums[level]
-
-    emitter.on 'error', (err) =>
-      @_printlog level:'error', name:name, message:err
-
-    ['warn', 'info', 'debug', 'trace'].forEach (l) =>
-      return if levelnums[l] > levelnum
-      emitter.on l, (msgs...) =>
-        @_printlog timestamp: new Date, level:l, name:name, message:msgs
-
 if typeof exports == "undefined"
-  MadEye.LogListener = LogListener
+  MadEye.Logger = Logger
 else
-  module.exports = LogListener
+  module.exports = Logger
