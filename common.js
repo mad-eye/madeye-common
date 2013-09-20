@@ -1,7 +1,5 @@
 require('coffee-script')
 exports.Settings = require('./src/Settings').Settings
-exports.FileTree = require('./src/fileTree').FileTree
-exports.File = require('./src/fileTree').File
 exports.Logger = require('./src/logger')
 
 //Testing
