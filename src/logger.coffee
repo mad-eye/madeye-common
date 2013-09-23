@@ -46,6 +46,8 @@ __onError = null
 class Logger
   constructor: (options) ->
     options ?= {}
+    if 'string' == typeof options
+      options = name: options
     @name = options.name ? 'root'
     @logLevel = options.logLevel ? __loggerLevel
 
@@ -100,9 +102,10 @@ class Logger
   _log: (level, messages) ->
     return unless __levelnums[level] <= __levelnums[@logLevel]
     data =
-      timestamp: new Date
+      name: @name
       level: level
       message: messages
+      timestamp: new Date
     _printlog data
     if level == 'error'
       __onError messages
