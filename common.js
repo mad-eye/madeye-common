@@ -11,7 +11,7 @@ exports.messageMaker = require('./src/messages').messageMaker
 exports.messageAction = require('./src/messages').messageAction
 
 //Errors
-exports.errors = require('./src/errors').errors
+exports.errors = require('./src/errors')
 
 //Tools
 exports.crc32 = require('./src/crc32').crc32
