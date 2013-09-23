@@ -48,6 +48,7 @@ class Logger
     options ?= {}
     if 'string' == typeof options
       options = name: options
+    @name = options.name
     @logLevel = options.logLevel ? __loggerLevel
 
   @setLevel: (level) ->
