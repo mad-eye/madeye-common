@@ -40,7 +40,12 @@ else
     trace: clc.blackBright
 
 
-__loggerLevel = 'info'
+if isMeteor
+  defaultLogLevel = Meteor.settings?.public?.logLevel
+else
+  defaultLogLevel = process.env.MADEYE_LOGLEVEL
+__loggerLevel = defaultLogLevel ? 'info'
+
 __onError = null
 
 class Logger
