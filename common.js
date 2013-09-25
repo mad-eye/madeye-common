@@ -6,10 +6,6 @@ exports.Logger = require('./src/logger')
 exports.MockSocket = require('./tests/mock/MockIoSocket').MockSocket
 exports.MockResponse = require('./tests/mock/mockResponse')
 
-//Messages
-exports.messageMaker = require('./src/messages').messageMaker
-exports.messageAction = require('./src/messages').messageAction
-
 //Errors
 exports.errors = require('./src/errors')
 
