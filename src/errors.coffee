@@ -60,6 +60,11 @@ errorTypes =
     message: (options) -> "You are not allowed to access #{path}"
     #path: filePath
 
+  ProjectClosed :
+    code: 403
+    reason: 'ProjectClosed'
+    message: (options) -> "The project is closed; the operation cannot be completed."
+
 ###
 
   MISSING_OBJECT : 'MISSING_OBJECT'
