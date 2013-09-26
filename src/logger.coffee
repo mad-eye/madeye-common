@@ -72,8 +72,10 @@ class Logger
     levelnum = __levelnums[level]
 
     emitter.on 'error', (err) =>
-      _printlog level:'error', name:name, message:err
-      __onError err
+      shouldPrint = __onError err
+      #Be explicit about false, to not trigger on undefined/null
+      unless shouldPrint == false
+        _printlog level:'error', name:name, message:err
 
     ['warn', 'info', 'debug', 'trace'].forEach (l) =>
       return if __levelnums[l] > levelnum
