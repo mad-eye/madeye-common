@@ -63,8 +63,11 @@ errorTypes =
   ProjectClosed :
     code: 403
     reason: 'ProjectClosed'
-    message: (options) -> "The project is closed; the operation cannot be completed."
+    message: "The project is closed; the operation cannot be completed."
 
+  NetworkError :
+    code: 504
+    message: "There seem to be issues with the network.  Please try again later."
 ###
 
   MISSING_OBJECT : 'MISSING_OBJECT'
@@ -96,7 +99,10 @@ class MadEyeError
     errType = errorTypes[type]
     unless errType
       throw new Error "Unrecognized error type '#{type}'"
-    details = errType.message(options)
+    if 'string' == typeof errType.message
+      details = errType.message
+    else #it's a fn
+      details = errType.message(options)
     if isMeteor
       err = new Meteor.Error errType.code, errType.reason, details
     else
