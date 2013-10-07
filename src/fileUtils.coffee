@@ -1,3 +1,5 @@
+_path = require 'path'
+
 exports.normalizePath = (path)->
   path.replace(/\ /g, "!").replace(/\//g, " ").toLowerCase()
 
@@ -22,3 +24,16 @@ exports.findLineEndingType = (contents) ->
   return 'Unix' if hasUnix
   return 'Mac' if hasOldMac
 
+exports.standardizePath = standardizePath = (path) ->
+  return unless path?
+  return path if _path.sep == '/'
+  return path.split(_path.sep).join('/')
+
+exports.localizePath = localizePath = (path) ->
+  return unless path?
+  return path if _path.sep == '/'
+  return path.split('/').join(_path.sep)
+
+exports.findParentPath = (path) ->
+  #Need to localize path seps for _path.dirname to work
+  standardizePath _path.dirname(localizePath(path))

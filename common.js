@@ -15,3 +15,6 @@ exports.normalizePath = require("./src/fileUtils").normalizePath
 exports.findLineEndingType = require("./src/fileUtils").findLineEndingType
 exports.cleanupLineEndings = require("./src/fileUtils").cleanupLineEndings
 exports.cors = require('./src/cors')
+exports.standardizePath = require("./src/fileUtils").cleanupLineEndings
+exports.localizePath = require("./src/fileUtils").localizePath
+exports.findParentPath = require("./src/fileUtils").findParentPath
