@@ -16,4 +16,6 @@ Package.on_use(function (api, where) {
   api.add_files(["preMeteor.js"], ["client", "server"]);
   api.add_files(["src/logger.coffee", 'src/errors.coffee', "src/crc32.js"], ["client", 'server']);
   api.add_files(["postMeteor.js"], ["client", "server"]);
+
+  api.export("MadEye", ["server", "client"]);
 });
