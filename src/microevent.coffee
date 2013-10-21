@@ -4,6 +4,13 @@
 # microevent.js is copyright Jerome Etienne, and licensed under the MIT license:
 # https://github.com/jeromeetienne/microevent.js
 
+if 'undefined' == typeof MadEye
+  if 'undefined' != typeof share
+    MadEye = share.MadEye
+  else
+    #Should only happen in node
+    MadEye = require './madeye'
+
 nextTick = if MadEye.isBrowser then (fn) -> setTimeout fn, 0 else process['nextTick']
 
 class MicroEvent

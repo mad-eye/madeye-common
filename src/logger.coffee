@@ -1,4 +1,9 @@
-isMeteor = 'undefined' != typeof Meteor
+if 'undefined' == typeof MadEye
+  if 'undefined' != typeof share
+    MadEye = share.MadEye
+  else
+    #Should only happen in node
+    MadEye = require './madeye'
 
 if MadEye.isBrowser
   moment = (date) -> moment
@@ -19,9 +24,7 @@ __levelnums =
   debug: 3
   trace: 4
 
-if Meteor?.isClient
-  BROWSER = true
-
+if MadEye.isBrowser
   colors =
     error: (x) -> x
     warn: (x) -> x
@@ -29,7 +32,7 @@ if Meteor?.isClient
     debug: (x) -> x
     trace: (x) -> x
 else
-  if isMeteor #isServer
+  if MadEye.isMeteor
     clc = Npm.require 'cli-color'
   else
     clc = require 'cli-color'
@@ -42,7 +45,7 @@ else
     trace: clc.blackBright
 
 
-if isMeteor
+if MadEye.isMeteor
   defaultLogLevel = Meteor.settings?.public?.logLevel
 else
   defaultLogLevel = process.env.MADEYE_LOGLEVEL
@@ -81,6 +84,7 @@ class Listener
 
       @detach name
       @listen logger, name, thisLevel
+    return
 
   listen: (logger, name, level=null) ->
     unless logger
@@ -108,6 +112,7 @@ class Listener
         @handleLog timestamp: new Date, level:l, name:name, message:msgs
       logger.on l, listenFn
       @listenFns[name][l] = listenFn
+    return
 
   detach: (name) ->
     logger = @loggers[name]
@@ -117,6 +122,7 @@ class Listener
     delete @listenFns[name]
     delete @loggers[name]
     delete @logLevels[name]
+    return
   
   handleLog: (data) ->
     timestr = moment(data.timestamp).format("YYYY-MM-DD HH:mm:ss.SSS")
@@ -156,6 +162,9 @@ class Logger extends EventEmitter
 
   @onError: (callback) ->
     __onError = callback
+
+  @listen: (logger, name, level) ->
+    listener.listen logger, name, level
 
   #take single message arg, that is an array.
   _log: (level, messages) ->
