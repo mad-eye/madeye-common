@@ -1,14 +1,16 @@
 isMeteor = 'undefined' != typeof Meteor
 
-unless isMeteor
-  moment = require 'moment'
-else
-  if Meteor.isServer
+if MadEye.isBrowser
+  moment = (date) -> moment
+  moment.format = (format) -> ""
+  EventEmitter = MicroEvent
+else #isServer
+  if MadEye.isMeteor
     moment = Npm.require 'moment'
-  else #isClient
-    moment = (date) -> moment
-    moment.format = (format) -> ""
-
+    {EventEmitter} = Npm.require 'events'
+  else
+    moment = require 'moment'
+    {EventEmitter} = require 'events'
 
 __levelnums =
   error: 0
@@ -48,41 +50,75 @@ __loggerLevel = defaultLogLevel ? 'info'
 
 __onError = null
 
-class Logger
+class Listener
   constructor: (options) ->
     options ?= {}
     if 'string' == typeof options
-      options = name: options
-    @name = options.name
+      options = logLevel: options
+    #Default logLevel
     @logLevel = options.logLevel ? __loggerLevel
+    #logLevels for specific loggers
+    @logLevels = {}
+    #remember loggers for changing levels later
+    @loggers = {}
+    # Need to remember these to detach
+    # name: {level: fn}
+    @listenFns = {}
 
-  @setLevel: (level) ->
+  setLevel: (level) ->
+    return if __loggerLevel == level
+    oldLevel = __loggerLevel
     __loggerLevel = level
-    #TODO: reset how we listen to listeners and loggers
 
-  @onError: (callback) ->
-    __onError = callback
+    #recalculate how we listen to listeners and loggers
+    for name, logger of @loggers
+      thisLevel = @logLevels[name]
+      if thisLevel
+        #No need to recaculate if the loggers level is above or below
+        #both oldLevel and the new level
+        unless level < thisLevel < oldLevel or oldLevel < thisLevel < level
+          continue
 
-  @listen: (emitter, name, level=null) ->
-    unless emitter
+      @detach name
+      @listen logger, name, thisLevel
+
+  listen: (logger, name, level=null) ->
+    unless logger
       throw Error "An object is required for logging!"
     unless name
       throw Error "Name is required for logging!"
-    level ?= __loggerLevel
-    levelnum = __levelnums[level]
+    @loggers[name] = logger
+    @logLevels[name] = level if level
 
-    emitter.on 'error', (err) =>
+    level ?= __loggerLevel
+    #TODO: Detach possibly existing logger
+    @listenFns[name] = {}
+
+    errorFn = (err) =>
       shouldPrint = __onError err
       #Be explicit about false, to not trigger on undefined/null
       unless shouldPrint == false
-        _printlog level:'error', name:name, message:err
+        @handleLog timestamp: new Date, level:'error', name:name, message:err
+    logger.on 'error', errorFn
+    @listenFns[name]['error'] = errorFn
 
     ['warn', 'info', 'debug', 'trace'].forEach (l) =>
-      return if __levelnums[l] > levelnum
-      emitter.on l, (msgs...) =>
-        _printlog timestamp: new Date, level:l, name:name, message:msgs
+      return if __levelnums[l] > __levelnums[level]
+      listenFn = (msgs...) =>
+        @handleLog timestamp: new Date, level:l, name:name, message:msgs
+      logger.on l, listenFn
+      @listenFns[name][l] = listenFn
 
-  _printlog = (data) ->
+  detach: (name) ->
+    logger = @loggers[name]
+    return unless logger
+    for level, listenFn of @listenFns[name]
+      logger.removeListener level, listenFn
+    delete @listenFns[name]
+    delete @loggers[name]
+    delete @logLevels[name]
+  
+  handleLog: (data) ->
     timestr = moment(data.timestamp).format("YYYY-MM-DD HH:mm:ss.SSS")
     color = colors[data.level]
     prefix = "#{timestr} #{color(data.level+": ")} "
@@ -97,6 +133,7 @@ class Logger
         if 'string' == typeof msg
           message += msg + ' '
         else
+          #FIXME: Handle circular structures
           message += JSON.stringify(msg) + ' '
   
     if __levelnums[data.level] <= __levelnums['warn']
@@ -104,18 +141,26 @@ class Logger
     else
       console.log prefix, message
 
+listener = new Listener()
+
+class Logger extends EventEmitter
+  constructor: (options) ->
+    options ?= {}
+    if 'string' == typeof options
+      options = name: options
+    @name = options.name
+    listener.listen this, options.name, options.logLevel
+
+  @setLevel: (level) ->
+    listener.setLevel level
+
+  @onError: (callback) ->
+    __onError = callback
 
   #take single message arg, that is an array.
   _log: (level, messages) ->
-    return unless __levelnums[level] <= __levelnums[@logLevel]
-    data =
-      name: @name
-      level: level
-      message: messages
-      timestamp: new Date
-    _printlog data
-    if level == 'error'
-      __onError messages
+    messages.unshift level
+    @emit.apply this, messages
 
   #take multiple args
   log: (level, messages...) -> @_log level, messages
@@ -128,5 +173,6 @@ class Logger
 
 if typeof exports == "undefined"
   MadEye.Logger = Logger
+  MadEye.Logger.listener = listener
 else
   module.exports = Logger
