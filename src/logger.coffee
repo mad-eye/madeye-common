@@ -86,6 +86,13 @@ class Listener
       @listen logger, name, thisLevel
     return
 
+  setLevels: (name, level) ->
+    oldLevel = @logLevels[name]
+    return if level == oldLevel
+    logger = @loggers[name]
+    @detach name
+    @listen logger, name, level
+
   listen: (logger, name, level=null) ->
     unless logger
       throw Error "An object is required for logging!"
@@ -159,6 +166,9 @@ class Logger extends EventEmitter
 
   @setLevel: (level) ->
     listener.setLevel level
+
+  @setLevels: (name, level) ->
+    listener.setLevels name, level
 
   @onError: (callback) ->
     __onError = callback
