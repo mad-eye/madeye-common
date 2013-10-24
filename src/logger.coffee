@@ -105,11 +105,11 @@ class Listener
     #TODO: Detach possibly existing logger
     @listenFns[name] = {}
 
-    errorFn = (err) =>
-      shouldPrint = __onError? err
+    errorFn = (msgs...) =>
+      shouldPrint = __onError? msgs
       #Be explicit about false, to not trigger on undefined/null
       unless shouldPrint == false
-        @handleLog timestamp: new Date, level:'error', name:name, message:err
+        @handleLog timestamp: new Date, level:'error', name:name, message:msgs
     logger.on 'error', errorFn
     @listenFns[name]['error'] = errorFn
 
@@ -138,21 +138,16 @@ class Listener
     prefix += "[#{data.name}] " if data.name
 
     if 'string' == typeof data.message
-      message = data.message
+      messages = [data.message]
     else
-      #Passing message as an array of args.
-      message = ''
-      for msg in data.message
-        if 'string' == typeof msg
-          message += msg + ' '
-        else
-          #FIXME: Handle circular structures
-          message += JSON.stringify(msg) + ' '
+      messages = data.message
+
+    messages.unshift prefix
   
     if __levelnums[data.level] <= __levelnums['warn']
-      console.error prefix, message
+      console.error.apply console, messages
     else
-      console.log prefix, message
+      console.log.apply console, messages
 
 listener = new Listener()
 
