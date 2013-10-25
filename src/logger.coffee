@@ -106,7 +106,7 @@ class Listener
     @listenFns[name] = {}
 
     errorFn = (msgs...) =>
-      shouldPrint = __onError? msgs
+      shouldPrint = __onError?.apply this, msgs
       #Be explicit about false, to not trigger on undefined/null
       unless shouldPrint == false
         @handleLog timestamp: new Date, level:'error', name:name, message:msgs
