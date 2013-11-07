@@ -57,7 +57,7 @@ errorTypes =
   PermissionDenied :
     code: 403
     reason: 'PermissionDenied'
-    message: (options) -> "You are not allowed to access #{path}"
+    message: (options) -> "You are not allowed to access #{options.path}"
     #path: filePath
 
   ProjectClosed :
@@ -68,31 +68,6 @@ errorTypes =
   NetworkError :
     code: 504
     message: "There seem to be issues with the network.  Please try again later."
-###
-
-  MISSING_OBJECT : 'MISSING_OBJECT'
-  PERMISSION_DENIED : 'PERMISSION_DENIED'
-  INITIALIZED_FILE_NOT_EMPTY : 'INITIALIZED_FILE_NOT_EMPTY' 
-  # Network issues
-  CONNECTION_CLOSED : 'CONNECTION_CLOSED'
-  DATABASE_ERROR : 'DATABASE_ERROR'
-  SHAREJS_ERROR : 'SHAREJS_ERROR'
-  NETWORK_ERROR : 'NETWORK_ERROR'
-  SOCKET_ERROR : 'SOCKET_ERROR'
-
-
-errorMessage =
-  MISSING_OBJECT : 'The object request was missing.'
-  #When we are trying to initialize a sharejs file but it already has been
-  INITIALIZED_FILE_NOT_EMPTY : "The file has already been initialized.  Using existing version."
-  # Network issues
-  CONNECTION_CLOSED : 'The connection is closed.'
-  DATABASE_ERROR : 'There was an error with the database.'
-  SHAREJS_ERROR : 'We had trouble syncing the editor.  Please reload the page.'
-  NETWORK_ERROR : 'There was an error with the connection.'
-  SOCKET_ERROR : 'There was an error with the connection.'
-
-###
 
 class MadEyeError
   constructor: (type, options) ->
