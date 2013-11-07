@@ -3,10 +3,7 @@ Package.describe({
 });
 
 Npm.depends({
-  semver: '2.1.0', //Used by apogee server
-  moment: '2.2.1',
-  'cli-color': '0.2.2'
-
+  semver: '2.1.0' //Used by apogee server
 });
 
 Package.on_use(function (api, where) {
@@ -14,8 +11,7 @@ Package.on_use(function (api, where) {
   api.use(["coffeescript", 'underscore'], ["client", "server"]);
 
   api.add_files(["preMeteor.js", "src/madeye.coffee"], ["client", "server"]);
-  api.add_files("src/microevent.coffee", 'client');
-  api.add_files(["src/logger.coffee", 'src/errors.coffee', "src/crc32.js"], ["client", 'server']);
+  api.add_files(['src/errors.coffee', "src/crc32.js"], ["client", 'server']);
   api.add_files(["postMeteor.js"], ["client", "server"]);
 
   api.export("MadEye", ["server", "client"]);

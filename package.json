@@ -8,13 +8,11 @@
   },
   "dependencies": {
     "coffee-script": "1.6.3",
-    "underscore": "1.5.1",
-    "node-uuid": "1.4.0",
-    "moment": "2.1.0",
-    "cli-color": "0.2.2"
+    "underscore": "1.5.1"
   },
   "devDependencies": {
     "mocha": "~1.7.0",
-    "chai": "~1.5.0"
+    "chai": "~1.5.0",
+    "node-uuid": "1.4.0"
   }
 }

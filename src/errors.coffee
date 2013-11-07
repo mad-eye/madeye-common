@@ -120,6 +120,8 @@ errors =
     new MadEyeError type, options
 
 if typeof exports == "undefined"
+  if 'undefined' == typeof MadEye and 'undefined' != typeof share
+      MadEye = share.MadEye
   MadEye.Errors = errors
 else
   module.exports = errors

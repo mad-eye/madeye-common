@@ -1,6 +1,5 @@
 require('coffee-script')
 exports.Settings = require('./src/Settings').Settings
-exports.Logger = require('./src/logger')
 
 //Testing
 exports.MockSocket = require('./tests/mock/MockIoSocket').MockSocket
