@@ -13,7 +13,7 @@ Settings = {
   hangoutPrefix: process.env['MADEYE_HANGOUT_PREFIX']
   hangoutAppId: process.env['MADEYE_HANGOUT_APP_ID']
   userStaticFiles: process.env['MADEYE_USER_STATIC_FILES']
-  shareHost: process.env.MADEYE_SHARE_HOST
+  tunnelHost: process.env.MADEYE_TUNNEL_HOST
 }
 
 if typeof exports == "undefined"
