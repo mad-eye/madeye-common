@@ -11,7 +11,8 @@
   });
 
   isBinaryExt = function(extension) {
-    return !!exts[extension];
+    if (!extension) return false;
+    return !!exts[extension.toLowerCase()];
   };
 
   if (typeof exports != "undefined")
