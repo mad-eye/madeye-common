@@ -9,6 +9,7 @@ Settings = {
   ddpPort: process.env["MADEYE_DDP_PORT"]
   mongoPort: process.env["MADEYE_MONGO_PORT"]
   mongoUrl: process.env["MADEYE_MONGO_URL"]
+  warehouseUrl: process.env["MADEYE_WAREHOUSE_URL"]
   googleAnalyticsId: process.env["MADEYE_GOOGLE_ANALYTICS_ID"]
   hangoutPrefix: process.env['MADEYE_HANGOUT_PREFIX']
   hangoutAppId: process.env['MADEYE_HANGOUT_APP_ID']
