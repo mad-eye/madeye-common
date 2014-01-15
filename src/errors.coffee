@@ -46,8 +46,8 @@ errorTypes =
   VersionOutOfDate :
     code: 403
     reason: 'VersionOutOfDate'
-    message: (options) -> "Your version #{options.version} of MadEye is out of date.  Please run 'sudo npm update -g madeye' to get the latest."
-    #version:
+    message: (options) -> options.message
+    #message:
 
   IsDirectory :
     code: 403
