@@ -1,8 +1,5 @@
 _path = require 'path'
 
-exports.normalizePath = (path)->
-  path.replace(/\ /g, "!").replace(/\//g, " ").toLowerCase()
-
 exports.cleanupLineEndings = (contents) ->
   return contents unless (/\r/.test contents)
   lineBreakRegex = /(\r\n|\r|\n)/gm
