@@ -67,7 +67,14 @@ errorTypes =
 
   NetworkError :
     code: 504
+    reason: 'NetworkError'
     message: "There seem to be issues with the network.  Please try again later."
+
+  DatabaseError :
+    code: 504
+    reason: 'DatabaseError'
+    message: 'We had an error with the database.  Please try again later.'
+
 
 class MadEyeError
   constructor: (type, options) ->
@@ -84,7 +91,7 @@ class MadEyeError
       err =
         code: errType.code
         reason: errType.reason
-        details:details
+        details: details
         madeye: true
 
     return err
