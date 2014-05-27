@@ -11,7 +11,7 @@ exports.errors = require('./src/errors')
 //Tools
 exports.crc32 = require('./src/crc32').crc32
 exports.canUseInstaller = require('./src/canUseInstaller').canUseInstaller
-exports.normalizePath = require("./src/fileUtils").normalizePath
+exports.normalizePath = require("./src/normalizePath").normalizePath
 exports.findLineEndingType = require("./src/fileUtils").findLineEndingType
 exports.cleanupLineEndings = require("./src/fileUtils").cleanupLineEndings
 exports.cors = require('./src/cors')
